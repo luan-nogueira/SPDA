@@ -111,6 +111,24 @@ export default function ChecklistItem({ id, question, onAnswer, initialStatus = 
     notifyChange(status, observation, null);
   };
 
+  const retryUploadPending = async () => {
+    if (!photo || !isPendingPhoto(photo)) return;
+    setIsUploading(true);
+    setUploadProgress(0);
+    try {
+      const blob = await dataUrlToBlob(photo);
+      const url = await uploadBlob(blob);
+      setPhoto(url);
+      notifyChange(status, observation, url);
+      toast.success('Foto enviada com sucesso para a nuvem!', 2000);
+    } catch (err) {
+      console.warn('Tentativa manual falhou:', err);
+      toast.error('Erro ao enviar foto: ' + (err.message || 'Falha de rede'));
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   const pending = isPendingPhoto(photo);
 
   return (
@@ -156,7 +174,30 @@ export default function ChecklistItem({ id, question, onAnswer, initialStatus = 
         ) : (
           <div className="photo-preview-container">
             <img src={photo} alt={`Foto: ${question}`} className="photo-preview" onClick={() => setZoomed(true)} />
-            {pending && <span className="photo-pending">⏳ Aguardando internet para enviar</span>}
+            {pending && (
+              <button
+                type="button"
+                className="photo-pending"
+                onClick={retryUploadPending}
+                disabled={isUploading}
+                style={{
+                  width: '100%',
+                  cursor: 'pointer',
+                  border: '1px solid rgba(245, 158, 11, 0.4)',
+                  background: 'rgba(245, 158, 11, 0.15)',
+                  fontFamily: 'inherit',
+                  fontWeight: 600,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.4rem',
+                  padding: '0.5rem'
+                }}
+              >
+                <span>☁️</span>
+                <span>{isUploading ? `Enviando foto… ${uploadProgress}%` : 'Foto salva localmente. Toque para sincronizar agora'}</span>
+              </button>
+            )}
             <div className="photo-actions">
               <button className="chip-btn" onClick={triggerCamera}>🔄 Trocar</button>
               <button className="chip-btn danger" onClick={removePhoto}>🗑️ Remover</button>
