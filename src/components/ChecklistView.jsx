@@ -17,6 +17,7 @@ export default function ChecklistView({ poste, onSave, onBack }) {
   const [manualText, setManualText] = useState('');
   const [showManual, setShowManual] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [collapsed, setCollapsed] = useState(() => new Set());
   const [scrolled, setScrolled] = useState(false);
   const stopRefineRef = useRef(null);
@@ -133,14 +134,22 @@ export default function ChecklistView({ poste, onSave, onBack }) {
     } catch { /* ignore */ }
   };
 
-  const handleFinish = () => {
-    onSave({
-      ...poste,
-      answers,
-      location,
-      distances,
-      updatedAt: new Date().toISOString()
-    });
+  const handleFinish = async () => {
+    if (isSaving) return;
+    setIsSaving(true);
+    try {
+      await onSave({
+        ...poste,
+        answers,
+        location,
+        distances,
+        updatedAt: new Date().toISOString()
+      });
+    } catch (err) {
+      console.error("Erro ao salvar:", err);
+      toast?.error("Erro ao salvar: " + (err.message || "Tente novamente"));
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -327,8 +336,14 @@ export default function ChecklistView({ poste, onSave, onBack }) {
       <div style={{ height: '90px' }}></div>
 
       <div className="fab-container">
-        <button id="btn-save" className={`btn-primary btn-save ${progress === 100 ? 'complete' : ''}`} onClick={handleFinish}>
-          <span>💾 Salvar Inspeção</span>
+        <button
+          id="btn-save"
+          className={`btn-primary btn-save ${progress === 100 ? 'complete' : ''}`}
+          onClick={handleFinish}
+          disabled={isSaving}
+          style={{ opacity: isSaving ? 0.75 : 1, cursor: isSaving ? 'wait' : 'pointer' }}
+        >
+          <span>{isSaving ? '⏳ Salvando Inspeção…' : '💾 Salvar Inspeção'}</span>
           <span className="btn-save-pct">{progress}%</span>
         </button>
       </div>

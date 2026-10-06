@@ -183,15 +183,72 @@ function App() {
     }
   };
 
+  const sanitizeForFirestore = (val) => {
+    if (val === undefined) return null;
+    if (val === null || typeof val !== 'object') return val;
+    if (Array.isArray(val)) return val.map(sanitizeForFirestore);
+    const out = {};
+    for (const [k, v] of Object.entries(val)) {
+      if (v !== undefined) {
+        out[k] = sanitizeForFirestore(v);
+      }
+    }
+    return out;
+  };
+
   const handleSavePoste = async (updatedPoste) => {
+    const targetId = updatedPoste.id || activePosteId || (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString());
     const { id, ...data } = updatedPoste;
+
+    // Sincroniza fotos pendentes para o Storage se houver alguma
+    const cleanedAnswers = { ...(data.answers || {}) };
+    for (const [qId, ans] of Object.entries(cleanedAnswers)) {
+      if (ans?.photo && isPendingPhoto(ans.photo)) {
+        try {
+          const blob = await dataUrlToBlob(ans.photo);
+          const storageRef = ref(storage, `photos/${qId}_${Date.now()}.jpg`);
+          const uploadTask = await uploadBytesResumable(storageRef, blob, { contentType: 'image/jpeg' });
+          const downloadURL = await getDownloadURL(uploadTask.ref);
+          cleanedAnswers[qId] = { ...ans, photo: downloadURL };
+        } catch (err) {
+          console.warn("Foto mantida em cache local:", err);
+        }
+      }
+    }
+
+    const docData = sanitizeForFirestore({
+      ...data,
+      answers: cleanedAnswers,
+      updatedAt: new Date().toISOString()
+    });
+
     try {
-      await setDoc(doc(db, "contratos/SPDA/postes", id), data);
+      const savePromise = setDoc(doc(db, "contratos/SPDA/postes", targetId), docData, { merge: true });
+      
+      // Timeout seguro de 2.5s para não prender a tela caso a rede esteja oscilando
+      await Promise.race([
+        savePromise,
+        new Promise(resolve => setTimeout(resolve, 2500))
+      ]);
+
+      // Atualiza imediatamente na lista de postes em memória
+      setPostes(prev => {
+        const idx = prev.findIndex(p => p.id === targetId);
+        if (idx >= 0) {
+          const copy = [...prev];
+          copy[idx] = { id: targetId, ...copy[idx], ...docData };
+          return copy;
+        }
+        return [{ id: targetId, ...docData }, ...prev];
+      });
+
       toast?.success('Inspeção salva com sucesso!');
       setCurrentView('home');
       setActivePosteId(null);
     } catch (err) {
-      toast?.error(`Erro ao salvar inspeção: ${err.message}`);
+      console.error("Erro ao salvar inspeção:", err);
+      toast?.error(`Erro ao salvar: ${err.message || 'Verifique a conexão'}`);
+      throw err;
     }
   };
 
