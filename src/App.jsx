@@ -58,6 +58,8 @@ function App() {
     return () => unsubscribe();
   }, []);
 
+  const isFirstLoadRef = useRef(true);
+
   // Firestore Listener (Only runs when logged in)
   useEffect(() => {
     if (!user) {
@@ -86,6 +88,25 @@ function App() {
 
         // Para exibição na lista, os mais recentes vêm primeiro
         numberedPostes.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+
+        // Notifica em tempo real a todos os outros usuários conectados
+        if (!isFirstLoadRef.current) {
+          snapshot.docChanges().forEach((change) => {
+            const docData = change.doc.data();
+            if (change.type === 'modified') {
+              const totalQ = checklistData.reduce((acc, s) => acc + s.questions.length, 0);
+              const answered = Object.values(docData.answers || {}).filter(a => a?.status).length;
+              if (answered >= totalQ) {
+                toast?.success(`⚡ ${docData.name} acaba de ser 100% finalizado!`, 4000);
+              } else {
+                toast?.info(`📝 ${docData.name} foi atualizado em tempo real.`, 2500);
+              }
+            } else if (change.type === 'added') {
+              toast?.info(`➕ Novo poste adicionado: ${docData.name}`, 3000);
+            }
+          });
+        }
+        isFirstLoadRef.current = false;
 
         // Indica se há escritas com cache local ainda pendentes
         setPendingWrites(snapshot.metadata.hasPendingWrites ? 1 : 0);

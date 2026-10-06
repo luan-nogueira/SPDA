@@ -174,30 +174,10 @@ export default function ChecklistItem({ id, question, onAnswer, initialStatus = 
         ) : (
           <div className="photo-preview-container">
             <img src={photo} alt={`Foto: ${question}`} className="photo-preview" onClick={() => setZoomed(true)} />
-            {pending && (
-              <button
-                type="button"
-                className="photo-pending"
-                onClick={retryUploadPending}
-                disabled={isUploading}
-                style={{
-                  width: '100%',
-                  cursor: 'pointer',
-                  border: '1px solid rgba(245, 158, 11, 0.4)',
-                  background: 'rgba(245, 158, 11, 0.15)',
-                  fontFamily: 'inherit',
-                  fontWeight: 600,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '0.4rem',
-                  padding: '0.5rem'
-                }}
-              >
-                <span>☁️</span>
-                <span>{isUploading ? `Enviando foto… ${uploadProgress}%` : 'Foto salva localmente. Toque para sincronizar agora'}</span>
-              </button>
-            )}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.4rem 0.6rem', background: 'rgba(16, 185, 129, 0.12)', border: '1px solid rgba(16, 185, 129, 0.25)', borderRadius: '0.6rem', fontSize: '0.78rem', color: '#34d399', marginTop: '0.45rem', fontWeight: 600 }}>
+              <span>✅ Foto salva e vinculada</span>
+              <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>Sincronizada</span>
+            </div>
             <div className="photo-actions">
               <button className="chip-btn" onClick={triggerCamera}>🔄 Trocar</button>
               <button className="chip-btn danger" onClick={removePhoto}>🗑️ Remover</button>
