@@ -29,8 +29,20 @@ export const canvasToDataUrl = (canvas, maxSize = 960, quality = 0.55) => {
 };
 
 export async function dataUrlToBlob(dataUrl) {
-  const res = await fetch(dataUrl);
-  return res.blob();
+  try {
+    const res = await fetch(dataUrl);
+    return await res.blob();
+  } catch {
+    const arr = dataUrl.split(',');
+    const mime = arr[0].match(/:(.*?);/)?.[1] || 'image/jpeg';
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new Blob([u8arr], { type: mime });
+  }
 }
 
 async function loadImage(file) {

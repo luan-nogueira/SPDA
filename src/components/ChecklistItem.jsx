@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { storage } from '../firebase';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { useToast } from './Toast';
-import { compressImage, canvasToDataUrl } from '../utils/image';
+import { compressImage, canvasToDataUrl, dataUrlToBlob } from '../utils/image';
 import { isPendingPhoto } from '../utils/stats';
 
 const UPLOAD_TIMEOUT = 25000;
