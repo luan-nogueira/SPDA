@@ -68,6 +68,8 @@ export function ProgressRing({ pct, size = 46, stroke = 4, bad = 0 }) {
 export default function HomeView({ postes, user, isOnline, pendingWrites, onCreateNew, onEditPoste, onExportReport, onOpenReport, onDeletePoste, onLogout }) {
   const [newPosteName, setNewPosteName] = useState('');
   const [search, setSearch] = useState('');
+  const [selectedMapPoste, setSelectedMapPoste] = useState(null);
+  const [showAllMap, setShowAllMap] = useState(false);
   const toast = useToast();
 
   const handleCreate = () => {
@@ -242,38 +244,164 @@ export default function HomeView({ postes, user, isOnline, pendingWrites, onCrea
 
         <section className="glass-card" id="mapa-postes">
           <div className="list-header">
-            <h2 className="card-title">🗺️ Mapa dos Postes</h2>
-            <span className="stat-badge">{located.length}/{postes.length} com GPS</span>
+            <div>
+              <h2 className="card-title">🗺️ Mapa dos Postes</h2>
+              <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
+                Clique em um poste para abrir o mapa com a sua localização exata.
+              </p>
+            </div>
+            {located.length > 0 && (
+              <button
+                type="button"
+                className="chip-btn"
+                onClick={() => setShowAllMap(v => !v)}
+              >
+                {showAllMap ? 'Ocultar Visão Geral' : '👁️ Ver Todos'}
+              </button>
+            )}
           </div>
 
-          {located.length === 0 ? (
+          {showAllMap && located.length > 0 && (
+            <div style={{ marginTop: '0.75rem', marginBottom: '1.25rem' }}>
+              <MapView markers={mapMarkers} height={280} onMarkerClick={(id) => {
+                const target = postes.find(p => p.id === id);
+                if (target) setSelectedMapPoste(target);
+              }} />
+              <div className="map-legend">
+                <span><i style={{ background: '#10b981' }}></i> Conforme</span>
+                <span><i style={{ background: '#ef4444' }}></i> Não Conforme</span>
+              </div>
+            </div>
+          )}
+
+          {postes.length === 0 ? (
             <div className="empty-state">
               <span className="empty-icon">📍</span>
-              <p>Nenhum poste com localização ainda.<br/>Capture o GPS no final do checklist.</p>
+              <p>Nenhum poste cadastrado ainda.<br/>Cadastre seu primeiro poste acima.</p>
             </div>
           ) : (
-            <>
-              <MapView markers={mapMarkers} height={320} onMarkerClick={undefined} />
-              <div className="map-legend">
-                <span><i style={{ background: '#10b981' }}></i> OK</span>
-                <span><i style={{ background: '#ef4444' }}></i> Com não conformidade</span>
-              </div>
-              <ul className="loc-list">
-                {located.map(p => (
-                  <li key={p.id}>
-                    <span className="loc-num">{p.num}</span>
-                    <div className="loc-list-info" onClick={() => onEditPoste(p.id)}>
-                      <strong>{p.name}</strong>
-                      <small>{p.location.lat.toFixed(6)}, {p.location.lng.toFixed(6)} · {sourceLabel(p.location)}</small>
+            <div className="map-postes-grid">
+              {postes.map((p) => {
+                const hasGps = p.location && Number.isFinite(p.location.lat) && Number.isFinite(p.location.lng);
+                return (
+                  <div
+                    key={p.id}
+                    className={`map-poste-card ${hasGps ? 'has-gps' : 'no-gps'}`}
+                    onClick={() => setSelectedMapPoste(p)}
+                  >
+                    <div className="map-poste-card-left">
+                      <span className={`map-status-dot ${hasGps ? 'active' : ''}`}></span>
+                      <div className="map-poste-card-info">
+                        <strong>#{p.num} · {p.name}</strong>
+                        <small>
+                          {hasGps
+                            ? `${p.location.lat.toFixed(5)}, ${p.location.lng.toFixed(5)} · ${sourceLabel(p.location)}`
+                            : 'Sem localização GPS gravada'}
+                        </small>
+                      </div>
                     </div>
-                    <a className="chip-btn" href={mapsLink(p.location.lat, p.location.lng)} target="_blank" rel="noreferrer" aria-label="Abrir no Google Maps">↗</a>
-                  </li>
-                ))}
-              </ul>
-            </>
+                    <span className="chip-btn map-open-chip">
+                      {hasGps ? 'Ver Mapa 📍' : 'Capturar ➕'}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
           )}
         </section>
       </main>
+
+      {/* Modal dedicado de localização do poste selecionado */}
+      {selectedMapPoste && (
+        <div className="dialog-backdrop" onClick={() => setSelectedMapPoste(null)}>
+          <div className="map-poste-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="map-poste-modal-header">
+              <div className="map-poste-modal-title">
+                <span className="poste-pill">#{selectedMapPoste.num}</span>
+                <div>
+                  <h3>{selectedMapPoste.name}</h3>
+                  <p>
+                    {selectedMapPoste.location
+                      ? `Localização: ${sourceLabel(selectedMapPoste.location)}`
+                      : 'Sem localização GPS registrada'}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                className="icon-btn"
+                onClick={() => setSelectedMapPoste(null)}
+                aria-label="Fechar"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="map-poste-modal-body">
+              {selectedMapPoste.location && Number.isFinite(selectedMapPoste.location.lat) ? (
+                <>
+                  <MapView
+                    markers={[{
+                      id: selectedMapPoste.id,
+                      lat: selectedMapPoste.location.lat,
+                      lng: selectedMapPoste.location.lng,
+                      label: String(selectedMapPoste.num),
+                      color: '#10b981'
+                    }]}
+                    accuracy={selectedMapPoste.location.accuracy}
+                    height={320}
+                  />
+
+                  <div className="map-modal-details">
+                    <div className="loc-coords">
+                      <code>{selectedMapPoste.location.lat.toFixed(6)}, {selectedMapPoste.location.lng.toFixed(6)}</code>
+                      <button
+                        type="button"
+                        className="chip-btn"
+                        onClick={async () => {
+                          await navigator.clipboard.writeText(`${selectedMapPoste.location.lat.toFixed(6)}, ${selectedMapPoste.location.lng.toFixed(6)}`);
+                          toast.success('Coordenadas copiadas!');
+                        }}
+                      >
+                        📋 Copiar
+                      </button>
+                    </div>
+
+                    <div className="map-modal-actions">
+                      <a
+                        className="btn-primary"
+                        href={mapsLink(selectedMapPoste.location.lat, selectedMapPoste.location.lng)}
+                        target="_blank"
+                        rel="noreferrer"
+                        style={{ textDecoration: 'none', padding: '0.85rem' }}
+                      >
+                        🗺️ Abrir no Google Maps ↗
+                      </a>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="empty-state" style={{ padding: '2rem 1rem' }}>
+                  <span className="empty-icon">📍</span>
+                  <p>Este poste ainda não possui coordenadas GPS cadastradas.</p>
+                  <button
+                    type="button"
+                    className="btn-primary"
+                    style={{ marginTop: '1rem', width: 'auto', padding: '0.8rem 1.6rem' }}
+                    onClick={() => {
+                      const id = selectedMapPoste.id;
+                      setSelectedMapPoste(null);
+                      onEditPoste(id);
+                    }}
+                  >
+                    Ir ao Checklist e Capturar GPS
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

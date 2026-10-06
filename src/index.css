@@ -2032,4 +2032,154 @@ body {
   }
 }
 
+/* ==========================================================================
+   8. MAPA DE POSTES - GRID & MODAL DEDICADO
+   ========================================================================== */
+.map-postes-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 0.85rem;
+}
+
+.map-poste-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--glass-border);
+  border-radius: 0.95rem;
+  padding: 0.85rem 1rem;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.map-poste-card:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.18);
+  transform: translateY(-1px);
+}
+
+.map-poste-card:active {
+  transform: scale(0.98);
+}
+
+.map-poste-card.has-gps {
+  border-left: 3px solid #10b981;
+}
+
+.map-poste-card.no-gps {
+  border-left: 3px solid rgba(148, 163, 184, 0.3);
+  opacity: 0.85;
+}
+
+.map-poste-card-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.map-status-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: rgba(148, 163, 184, 0.4);
+  flex-shrink: 0;
+}
+
+.map-status-dot.active {
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+}
+
+.map-poste-card-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.map-poste-card-info strong {
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.map-poste-card-info small {
+  font-size: 0.76rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.map-open-chip {
+  flex-shrink: 0;
+  font-size: 0.78rem;
+}
+
+/* Modal Dedicado de Localização do Poste */
+.map-poste-modal {
+  width: 100%;
+  max-width: 540px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--glass-border);
+  border-radius: 1.5rem;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+  animation: scaleIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.map-poste-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--glass-border);
+  background: rgba(15, 23, 42, 0.6);
+}
+
+.map-poste-modal-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.map-poste-modal-title h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.map-poste-modal-title p {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.map-poste-modal-body {
+  padding: 1.25rem;
+}
+
+.map-modal-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.map-modal-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.map-modal-actions .btn-primary {
+  border-radius: 0.75rem;
+}
+
+
 
