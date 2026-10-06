@@ -14,7 +14,8 @@ export default function ChecklistItem({ id, question, onAnswer, initialStatus = 
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [zoomed, setZoomed] = useState(false);
-  const fileInputRef = useRef(null);
+  const cameraInputRef = useRef(null);
+  const galleryInputRef = useRef(null);
   const toast = useToast();
 
   useEffect(() => {
@@ -95,19 +96,25 @@ export default function ChecklistItem({ id, question, onAnswer, initialStatus = 
       savePendingPhoto(compressed.canvas);
     } finally {
       setIsUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = '';
+      if (cameraInputRef.current) cameraInputRef.current.value = '';
+      if (galleryInputRef.current) galleryInputRef.current.value = '';
     }
   };
 
   const triggerCamera = () => {
-    if (!isUploading) fileInputRef.current?.click();
+    if (!isUploading) cameraInputRef.current?.click();
+  };
+
+  const triggerGallery = () => {
+    if (!isUploading) galleryInputRef.current?.click();
   };
 
   const removePhoto = async () => {
     const ok = await toast.confirm({ title: 'Remover foto?', message: 'A foto será desvinculada deste item.', confirmText: 'Remover', danger: true });
     if (!ok) return;
     setPhoto(null);
-    if (fileInputRef.current) fileInputRef.current.value = '';
+    if (cameraInputRef.current) cameraInputRef.current.value = '';
+    if (galleryInputRef.current) galleryInputRef.current.value = '';
     notifyChange(status, observation, null);
   };
 
@@ -168,9 +175,14 @@ export default function ChecklistItem({ id, question, onAnswer, initialStatus = 
             </div>
           </div>
         ) : !photo ? (
-          <button className="photo-btn" onClick={triggerCamera}>
-            <span className="icon">📷</span> Adicionar Foto
-          </button>
+          <div className="photo-btn-group">
+            <button type="button" className="photo-btn half" onClick={triggerCamera}>
+              <span className="icon">📸</span> Tirar Foto
+            </button>
+            <button type="button" className="photo-btn half gallery" onClick={triggerGallery}>
+              <span className="icon">📁</span> Anexar Foto
+            </button>
+          </div>
         ) : (
           <div className="photo-preview-container">
             <img src={photo} alt={`Foto: ${question}`} className="photo-preview" onClick={() => setZoomed(true)} />
@@ -179,8 +191,9 @@ export default function ChecklistItem({ id, question, onAnswer, initialStatus = 
               <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>Sincronizada</span>
             </div>
             <div className="photo-actions">
-              <button className="chip-btn" onClick={triggerCamera}>🔄 Trocar</button>
-              <button className="chip-btn danger" onClick={removePhoto}>🗑️ Remover</button>
+              <button type="button" className="chip-btn" onClick={triggerCamera}>📸 Tirar Outra</button>
+              <button type="button" className="chip-btn" onClick={triggerGallery}>📁 Anexar Outra</button>
+              <button type="button" className="chip-btn danger" onClick={removePhoto}>🗑️ Remover</button>
             </div>
           </div>
         )}
@@ -188,7 +201,14 @@ export default function ChecklistItem({ id, question, onAnswer, initialStatus = 
           type="file"
           accept="image/*"
           capture="environment"
-          ref={fileInputRef}
+          ref={cameraInputRef}
+          style={{ display: 'none' }}
+          onChange={handlePhotoCapture}
+        />
+        <input
+          type="file"
+          accept="image/*"
+          ref={galleryInputRef}
           style={{ display: 'none' }}
           onChange={handlePhotoCapture}
         />

@@ -390,6 +390,12 @@ body {
 }
 
 /* Media Actions */
+.photo-btn-group {
+  display: flex;
+  gap: 0.5rem;
+  width: 100%;
+}
+
 .photo-btn {
   width: 100%;
   background: rgba(255, 255, 255, 0.03);
@@ -404,6 +410,32 @@ body {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.photo-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--text-primary);
+}
+
+.photo-btn.half {
+  flex: 1;
+  width: auto;
+  padding: 0.75rem 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.photo-btn.half.gallery {
+  background: rgba(59, 130, 246, 0.08);
+  border-color: rgba(59, 130, 246, 0.35);
+  color: #93c5fd;
+}
+
+.photo-btn.half.gallery:hover {
+  background: rgba(59, 130, 246, 0.16);
+  border-color: #60a5fa;
 }
 
 .photo-preview {
@@ -1503,12 +1535,42 @@ body {
   display: flex;
   gap: 0.5rem;
   margin-top: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.chip-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.45rem 0.75rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
+  border-radius: 0.6rem;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex: 1;
+  min-width: fit-content;
+}
+
+.chip-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--text-secondary);
 }
 
 .chip-btn.danger {
   color: #f87171;
   border-color: rgba(239, 68, 68, 0.3);
   background: rgba(239, 68, 68, 0.1);
+}
+
+.chip-btn.danger:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: #ef4444;
 }
 
 .photo-btn.uploading {

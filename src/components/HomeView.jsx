@@ -142,14 +142,14 @@ export default function HomeView({ postes, user, isOnline, pendingWrites, onCrea
           <StatCard icon="🧵" label="Cabo total" value={g.cableTotal} suffix=" m" decimals={g.cableTotal % 1 ? 1 : 0} tone="amber" sub={`📷 ${g.cableCamera.toLocaleString('pt-BR')} · ⚡ ${g.cableSpda.toLocaleString('pt-BR')}`} />
         </section>
 
-        {(pendingWrites > 0 || g.pendingPhotos > 0 || !isOnline) && (
+        {(pendingWrites > 0 || !isOnline) && (
           <div className={`sync-banner ${isOnline ? '' : 'offline'}`}>
             <span>{isOnline ? '🔄' : '📴'}</span>
             <div>
               <strong>{isOnline ? 'Sincronizando com o servidor…' : 'Você está sem internet'}</strong>
               <small>
                 {isOnline
-                  ? `${pendingWrites} alteração(ões) e ${g.pendingPhotos} foto(s) sendo enviadas.`
+                  ? `${pendingWrites} alteração(ões) sendo enviadas.`
                   : 'Pode continuar trabalhando: tudo fica salvo no aparelho e será enviado quando a conexão voltar.'}
               </small>
             </div>
@@ -220,7 +220,6 @@ export default function HomeView({ postes, user, isOnline, pendingWrites, onCrea
                         <span className="stat-badge">{s.answered}/{s.total} itens</span>
                         {s.bad > 0 && <span className="stat-badge danger">❌ {s.bad} NC</span>}
                         {s.photos > 0 && <span className="stat-badge">📷 {s.photos}</span>}
-                        {s.pendingPhotos > 0 && <span className="stat-badge warning">⏳ {s.pendingPhotos} p/ enviar</span>}
                         {poste.location && <span className="stat-badge info">📍 GPS</span>}
                         <span className="stat-date">{new Date(poste.createdAt).toLocaleDateString('pt-BR')}</span>
                       </div>
