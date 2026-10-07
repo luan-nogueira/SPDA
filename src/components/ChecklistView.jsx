@@ -260,189 +260,221 @@ export default function ChecklistView({ poste, onSave, onBack }) {
         })}
 
 
-        <section className="glass-card">
-          <h2 className="section-title">📷 Informações das Câmeras</h2>
-          <label className="distance-field" style={{ marginBottom: '1rem' }}>
-            <span className="distance-label">Qtd. de Câmeras no Poste</span>
-            <input type="number" min="0" className="poste-input" placeholder="0" value={details.cameraCount} onChange={e => handleDetailChange('cameraCount', e.target.value)} />
-          </label>
+        <section className={`glass-card collapsible ${collapsed.has('sec6') ? 'is-collapsed' : ''}`}>
+          <button type="button" className="collapsible-head" onClick={() => toggleSection('sec6')} aria-expanded={!collapsed.has('sec6')}>
+            <h2 className="section-title">6. INFORMAÇÕES DAS CÂMERAS</h2>
+            <span className="collapsible-meta"><span className="collapsible-chevron">⌄</span></span>
+          </button>
+          <div className="collapsible-body">
+            <div className="collapsible-inner">
+              <label className="distance-field" style={{ marginBottom: '1rem' }}>
+                <span className="distance-label">Qtd. de Câmeras no Poste</span>
+                <input type="number" min="0" className="poste-input" placeholder="0" value={details.cameraCount} onChange={e => handleDetailChange('cameraCount', e.target.value)} />
+              </label>
 
-          <label className="distance-field" style={{ marginBottom: '1rem' }}>
-            <span className="distance-label">Tipo e Nome das Câmeras</span>
-            <input type="text" className="poste-input" placeholder="Ex: PTZ, Fixa..." value={details.cameraType} onChange={e => handleDetailChange('cameraType', e.target.value)} />
-          </label>
+              <label className="distance-field" style={{ marginBottom: '1rem' }}>
+                <span className="distance-label">Tipo e Nome das Câmeras</span>
+                <input type="text" className="poste-input" placeholder="Ex: PTZ, Fixa..." value={details.cameraType} onChange={e => handleDetailChange('cameraType', e.target.value)} />
+              </label>
 
-          <label className="distance-field" style={{ marginBottom: '1rem' }}>
-            <span className="distance-label">Estado Visual das Câmeras (Kit frontal, fixação, lente)</span>
-            <textarea className="poste-input observation-input" placeholder="Descreva o estado visual..." value={details.cameraCondition} onChange={e => handleDetailChange('cameraCondition', e.target.value)}></textarea>
-          </label>
+              <label className="distance-field" style={{ marginBottom: '1rem' }}>
+                <span className="distance-label">Estado Visual das Câmeras (Kit frontal, fixação, lente)</span>
+                <textarea className="poste-input observation-input" placeholder="Descreva o estado visual..." value={details.cameraCondition} onChange={e => handleDetailChange('cameraCondition', e.target.value)}></textarea>
+              </label>
+            </div>
+          </div>
         </section>
 
-        <section className="glass-card">
-          <h2 className="section-title">🎛️ Instalação do Painel</h2>
-          <label className="distance-field" style={{ marginBottom: '1rem' }}>
-            <span className="distance-label">Altura de Instalação do Painel (m)</span>
-            <input type="text" className="poste-input" placeholder="Ex: 2.5m" value={details.panelHeight} onChange={e => handleDetailChange('panelHeight', e.target.value)} />
-          </label>
-        </section>
-
-        <section className="glass-card">
-          <h2 className="section-title">📦 Caixa de Equipamentos</h2>
-          
-          <h3 style={{ fontSize: '1rem', marginBottom: '0.5rem', marginTop: '1rem' }}>Detalhes das Fibras</h3>
-          <div className="options-group" style={{ marginBottom: '0.5rem' }}>
-            <label><input type="radio" name="fiberType" value="Monomodo" checked={details.fiberType === 'Monomodo'} onChange={e => handleDetailChange('fiberType', e.target.value)}/> Monomodo</label>
-            <label style={{ marginLeft: '1rem' }}><input type="radio" name="fiberType" value="Multimodo" checked={details.fiberType === 'Multimodo'} onChange={e => handleDetailChange('fiberType', e.target.value)}/> Multimodo</label>
-          </div>
-          <div className="distance-grid">
-            <label className="distance-field"><span className="distance-label">Nº de Fibras</span><input type="number" className="poste-input" value={details.fiberCount} onChange={e => handleDetailChange('fiberCount', e.target.value)}/></label>
-            <label className="distance-field"><span className="distance-label">Conector</span><input type="text" className="poste-input" value={details.fiberConnector} onChange={e => handleDetailChange('fiberConnector', e.target.value)}/></label>
-          </div>
-          <label className="distance-field" style={{ marginBottom: '1rem', marginTop: '1rem' }}><span className="distance-label">Cabo / Fabricante</span><input type="text" className="poste-input" value={details.fiberCable} onChange={e => handleDetailChange('fiberCable', e.target.value)}/></label>
-
-          <h3 style={{ fontSize: '1rem', marginBottom: '0.5rem', marginTop: '1rem' }}>Alimentação Elétrica</h3>
-          <div className="options-group" style={{ marginBottom: '0.5rem' }}>
-            <label><input type="radio" name="powerType" value="F+F+T" checked={details.powerType === 'F+F+T'} onChange={e => handleDetailChange('powerType', e.target.value)}/> F+F+T</label>
-            <label style={{ marginLeft: '1rem' }}><input type="radio" name="powerType" value="F+N+T" checked={details.powerType === 'F+N+T'} onChange={e => handleDetailChange('powerType', e.target.value)}/> F+N+T</label>
-          </div>
-          <div className="options-group" style={{ marginBottom: '1rem' }}>
-            <span style={{ marginRight: '1rem', fontSize: '0.9rem' }}>Tensão:</span>
-            <label><input type="radio" name="voltage" value="110v" checked={details.voltage === '110v'} onChange={e => handleDetailChange('voltage', e.target.value)}/> 110v</label>
-            <label style={{ marginLeft: '1rem' }}><input type="radio" name="voltage" value="220v" checked={details.voltage === '220v'} onChange={e => handleDetailChange('voltage', e.target.value)}/> 220v</label>
-          </div>
-
-          <label className="distance-field" style={{ marginBottom: '1.5rem' }}>
-            <span className="distance-label">Alimentação de Câmera</span>
-            <select className="poste-input" value={details.camPowerSource} onChange={e => handleDetailChange('camPowerSource', e.target.value)}>
-              <option value="">Selecione...</option>
-              <option value="Switch POE">Switch POE</option>
-              <option value="Injetor POE">Injetor POE</option>
-              <option value="Fonte Externa">Fonte Externa</option>
-            </select>
-          </label>
-
-        </section>
-
-        <section className="glass-card">
-          <h2 className="section-title">📋 Inventário Detalhado</h2>
-          <div className="inventory-list" style={{ marginBottom: '1rem' }}>
-            {['Switch', 'Injetor POE', 'Fonte de alimentação', 'Disjuntor / DPR', 'DPS', 'Conversor de mídia', 'Rádio', 'DIO', 'Bornes / Barramento de terra', 'Nobreak / Bateria'].map(item => (
-              <div key={item} className="inventory-card">
-                <h4 className="inventory-card-title">{item}</h4>
-                <div className="inventory-card-grid">
-                  <label>
-                    <span>Fabricante</span>
-                    <input type="text" className="inv-input" value={details.inventory[item]?.fabricante || ''} onChange={e => handleInventoryChange(item, 'fabricante', e.target.value)}/>
-                  </label>
-                  <label>
-                    <span>Modelo</span>
-                    <input type="text" className="inv-input" value={details.inventory[item]?.modelo || ''} onChange={e => handleInventoryChange(item, 'modelo', e.target.value)}/>
-                  </label>
-                  <label>
-                    <span>Qtd</span>
-                    <input type="number" className="inv-input" value={details.inventory[item]?.qtd || ''} onChange={e => handleInventoryChange(item, 'qtd', e.target.value)}/>
-                  </label>
-                  <label>
-                    <span>Estado</span>
-                    <select className="inv-input" value={details.inventory[item]?.estado || ''} onChange={e => handleInventoryChange(item, 'estado', e.target.value)}>
-                      <option value=""></option>
-                      <option value="Bom">Bom</option>
-                      <option value="Regular">Regular</option>
-                      <option value="Ruim">Ruim</option>
-                    </select>
-                  </label>
-                  <label className="full-width">
-                    <span>Melhoria</span>
-                    <input type="text" className="inv-input" value={details.inventory[item]?.melhoria || ''} onChange={e => handleInventoryChange(item, 'melhoria', e.target.value)}/>
-                  </label>
-                </div>
+        <section className={`glass-card collapsible ${collapsed.has('sec7') ? 'is-collapsed' : ''}`}>
+          <button type="button" className="collapsible-head" onClick={() => toggleSection('sec7')} aria-expanded={!collapsed.has('sec7')}>
+            <h2 className="section-title">7. DADOS DA CAIXA DE EQUIPAMENTOS</h2>
+            <span className="collapsible-meta"><span className="collapsible-chevron">⌄</span></span>
+          </button>
+          <div className="collapsible-body">
+            <div className="collapsible-inner">
+              <h3 style={{ fontSize: '1rem', marginBottom: '0.5rem' }}>Detalhes das Fibras</h3>
+              <div className="options-group" style={{ marginBottom: '0.5rem' }}>
+                <label><input type="radio" name="fiberType" value="Monomodo" checked={details.fiberType === 'Monomodo'} onChange={e => handleDetailChange('fiberType', e.target.value)}/> Monomodo</label>
+                <label style={{ marginLeft: '1rem' }}><input type="radio" name="fiberType" value="Multimodo" checked={details.fiberType === 'Multimodo'} onChange={e => handleDetailChange('fiberType', e.target.value)}/> Multimodo</label>
               </div>
-            ))}
-          </div>
-
-          <label className="distance-field" style={{ marginBottom: '1rem' }}>
-            <span className="distance-label">Componentes Ausentes e Melhorias Propostas</span>
-            <textarea className="poste-input observation-input" placeholder="Cite componentes faltantes..." value={details.missingComponents} onChange={e => handleDetailChange('missingComponents', e.target.value)}></textarea>
-          </label>
-        </section>
-
-        <section className="glass-card">
-          <h2 className="section-title">📝 Observações Finais</h2>
-          <div className="distance-grid">
-            <label className="distance-field">
-              <span className="distance-label">Criticidade do Poste</span>
-              <select className="poste-input" value={details.criticality} onChange={e => handleDetailChange('criticality', e.target.value)}>
-                <option value="">Selecione...</option>
-                <option value="Alta">Alta</option>
-                <option value="Média">Média</option>
-                <option value="Baixa">Baixa</option>
-              </select>
-            </label>
-            <label className="distance-field">
-              <span className="distance-label">Grau de Prioridade</span>
-              <select className="poste-input" value={details.priority} onChange={e => handleDetailChange('priority', e.target.value)}>
-                <option value="">Selecione...</option>
-                <option value="Urgente">Urgente</option>
-                <option value="Alta">Alta</option>
-                <option value="Normal">Normal</option>
-                <option value="Baixa">Baixa</option>
-              </select>
-            </label>
-          </div>
-          <label className="distance-field" style={{ marginBottom: '1rem', marginTop: '1rem' }}>
-            <span className="distance-label">Observações Finais da Inspeção</span>
-            <textarea className="poste-input observation-input" placeholder="Dissertação sobre a inspeção..." value={details.finalObservations} onChange={e => handleDetailChange('finalObservations', e.target.value)}></textarea>
-          </label>
-        </section>
-
-        <section className="glass-card">
-          <h2 className="section-title">📏 Distâncias e Cabeamento</h2>
-          <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '1.25rem' }}>
-            Informe as metragens estimadas de cabo neste poste.
-          </p>
-          
-          <div className="distance-grid">
-            <label className="distance-field">
-              <span className="distance-label">📷 Cabo até a Câmera</span>
-              <div className="input-suffix">
-                <input
-                  id="dist-camera"
-                  type="number"
-                  inputMode="decimal"
-                  min="0"
-                  className="poste-input"
-                  placeholder="0"
-                  value={distances.camera}
-                  onChange={e => setDistances({ ...distances, camera: e.target.value })}
-                />
-                <span>m</span>
+              <div className="distance-grid">
+                <label className="distance-field"><span className="distance-label">Nº de Fibras</span><input type="number" className="poste-input" value={details.fiberCount} onChange={e => handleDetailChange('fiberCount', e.target.value)}/></label>
+                <label className="distance-field"><span className="distance-label">Conector</span><input type="text" className="poste-input" value={details.fiberConnector} onChange={e => handleDetailChange('fiberConnector', e.target.value)}/></label>
               </div>
-            </label>
-            <label className="distance-field">
-              <span className="distance-label">⚡ Cabo até o SPDA</span>
-              <div className="input-suffix">
-                <input
-                  id="dist-spda"
-                  type="number"
-                  inputMode="decimal"
-                  min="0"
-                  className="poste-input"
-                  placeholder="0"
-                  value={distances.spda}
-                  onChange={e => setDistances({ ...distances, spda: e.target.value })}
-                />
-                <span>m</span>
+              <label className="distance-field" style={{ marginBottom: '1rem', marginTop: '1rem' }}><span className="distance-label">Cabo / Fabricante</span><input type="text" className="poste-input" value={details.fiberCable} onChange={e => handleDetailChange('fiberCable', e.target.value)}/></label>
+
+              <h3 style={{ fontSize: '1rem', marginBottom: '0.5rem', marginTop: '1rem' }}>Alimentação Elétrica</h3>
+              <div className="options-group" style={{ marginBottom: '0.5rem' }}>
+                <label><input type="radio" name="powerType" value="F+F+T" checked={details.powerType === 'F+F+T'} onChange={e => handleDetailChange('powerType', e.target.value)}/> F+F+T</label>
+                <label style={{ marginLeft: '1rem' }}><input type="radio" name="powerType" value="F+N+T" checked={details.powerType === 'F+N+T'} onChange={e => handleDetailChange('powerType', e.target.value)}/> F+N+T</label>
               </div>
-            </label>
+              <div className="options-group" style={{ marginBottom: '1rem' }}>
+                <span style={{ marginRight: '1rem', fontSize: '0.9rem' }}>Tensão:</span>
+                <label><input type="radio" name="voltage" value="110v" checked={details.voltage === '110v'} onChange={e => handleDetailChange('voltage', e.target.value)}/> 110v</label>
+                <label style={{ marginLeft: '1rem' }}><input type="radio" name="voltage" value="220v" checked={details.voltage === '220v'} onChange={e => handleDetailChange('voltage', e.target.value)}/> 220v</label>
+              </div>
+
+              <label className="distance-field" style={{ marginBottom: '0.5rem' }}>
+                <span className="distance-label">Alimentação de Câmera</span>
+                <select className="poste-input" value={details.camPowerSource} onChange={e => handleDetailChange('camPowerSource', e.target.value)}>
+                  <option value="">Selecione...</option>
+                  <option value="Switch POE">Switch POE</option>
+                  <option value="Injetor POE">Injetor POE</option>
+                  <option value="Fonte Externa">Fonte Externa</option>
+                </select>
+              </label>
+            </div>
           </div>
         </section>
 
-        <section className="glass-card" style={{ marginBottom: '2rem', borderColor: location ? 'var(--success)' : 'var(--glass-border)' }}>
-          <h2 className="section-title">📍 Localização do Poste</h2>
-          <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
-            Capture a coordenada GPS atual para registrar a posição exata do poste no terminal.
-          </p>
-          
+        <section className={`glass-card collapsible ${collapsed.has('sec8') ? 'is-collapsed' : ''}`}>
+          <button type="button" className="collapsible-head" onClick={() => toggleSection('sec8')} aria-expanded={!collapsed.has('sec8')}>
+            <h2 className="section-title">8. INVENTÁRIO DETALHADO</h2>
+            <span className="collapsible-meta"><span className="collapsible-chevron">⌄</span></span>
+          </button>
+          <div className="collapsible-body">
+            <div className="collapsible-inner">
+              <div className="inventory-list" style={{ marginBottom: '1rem' }}>
+                {['Switch', 'Injetor POE', 'Fonte de alimentação', 'Disjuntor / DPR', 'DPS', 'Conversor de mídia', 'Rádio', 'DIO', 'Bornes / Barramento de terra', 'Nobreak / Bateria'].map(item => (
+                  <div key={item} className="inventory-card">
+                    <h4 className="inventory-card-title">{item}</h4>
+                    <div className="inventory-card-grid">
+                      <label>
+                        <span>Fabricante</span>
+                        <input type="text" className="inv-input" value={details.inventory[item]?.fabricante || ''} onChange={e => handleInventoryChange(item, 'fabricante', e.target.value)}/>
+                      </label>
+                      <label>
+                        <span>Modelo</span>
+                        <input type="text" className="inv-input" value={details.inventory[item]?.modelo || ''} onChange={e => handleInventoryChange(item, 'modelo', e.target.value)}/>
+                      </label>
+                      <label>
+                        <span>Qtd</span>
+                        <input type="number" className="inv-input" value={details.inventory[item]?.qtd || ''} onChange={e => handleInventoryChange(item, 'qtd', e.target.value)}/>
+                      </label>
+                      <label>
+                        <span>Estado</span>
+                        <select className="inv-input" value={details.inventory[item]?.estado || ''} onChange={e => handleInventoryChange(item, 'estado', e.target.value)}>
+                          <option value=""></option>
+                          <option value="Bom">Bom</option>
+                          <option value="Regular">Regular</option>
+                          <option value="Ruim">Ruim</option>
+                        </select>
+                      </label>
+                      <label className="full-width">
+                        <span>Melhoria</span>
+                        <input type="text" className="inv-input" value={details.inventory[item]?.melhoria || ''} onChange={e => handleInventoryChange(item, 'melhoria', e.target.value)}/>
+                      </label>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <label className="distance-field" style={{ marginBottom: '0.5rem' }}>
+                <span className="distance-label">Componentes Ausentes e Melhorias Propostas</span>
+                <textarea className="poste-input observation-input" placeholder="Cite componentes faltantes..." value={details.missingComponents} onChange={e => handleDetailChange('missingComponents', e.target.value)}></textarea>
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <section className={`glass-card collapsible ${collapsed.has('sec9') ? 'is-collapsed' : ''}`}>
+          <button type="button" className="collapsible-head" onClick={() => toggleSection('sec9')} aria-expanded={!collapsed.has('sec9')}>
+            <h2 className="section-title">9. OBSERVAÇÕES FINAIS</h2>
+            <span className="collapsible-meta"><span className="collapsible-chevron">⌄</span></span>
+          </button>
+          <div className="collapsible-body">
+            <div className="collapsible-inner">
+              <div className="distance-grid">
+                <label className="distance-field">
+                  <span className="distance-label">Criticidade do Poste</span>
+                  <select className="poste-input" value={details.criticality} onChange={e => handleDetailChange('criticality', e.target.value)}>
+                    <option value="">Selecione...</option>
+                    <option value="Alta">Alta</option>
+                    <option value="Média">Média</option>
+                    <option value="Baixa">Baixa</option>
+                  </select>
+                </label>
+                <label className="distance-field">
+                  <span className="distance-label">Grau de Prioridade</span>
+                  <select className="poste-input" value={details.priority} onChange={e => handleDetailChange('priority', e.target.value)}>
+                    <option value="">Selecione...</option>
+                    <option value="Urgente">Urgente</option>
+                    <option value="Alta">Alta</option>
+                    <option value="Normal">Normal</option>
+                    <option value="Baixa">Baixa</option>
+                  </select>
+                </label>
+              </div>
+              <label className="distance-field" style={{ marginBottom: '0.5rem', marginTop: '1rem' }}>
+                <span className="distance-label">Observações Finais da Inspeção</span>
+                <textarea className="poste-input observation-input" placeholder="Dissertação sobre a inspeção..." value={details.finalObservations} onChange={e => handleDetailChange('finalObservations', e.target.value)}></textarea>
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <section className={`glass-card collapsible ${collapsed.has('sec10') ? 'is-collapsed' : ''}`}>
+          <button type="button" className="collapsible-head" onClick={() => toggleSection('sec10')} aria-expanded={!collapsed.has('sec10')}>
+            <h2 className="section-title">10. DISTÂNCIAS, CABEAMENTO E PAINEL</h2>
+            <span className="collapsible-meta"><span className="collapsible-chevron">⌄</span></span>
+          </button>
+          <div className="collapsible-body">
+            <div className="collapsible-inner">
+              <label className="distance-field" style={{ marginBottom: '1rem' }}>
+                <span className="distance-label">🎛️ Altura de Instalação do Painel (m)</span>
+                <input type="text" className="poste-input" placeholder="Ex: 2.5m" value={details.panelHeight} onChange={e => handleDetailChange('panelHeight', e.target.value)} />
+              </label>
+
+              <div className="distance-grid">
+                <label className="distance-field">
+                  <span className="distance-label">📷 Cabo até a Câmera</span>
+                  <div className="input-suffix">
+                    <input
+                      id="dist-camera"
+                      type="number"
+                      inputMode="decimal"
+                      min="0"
+                      className="poste-input"
+                      placeholder="0"
+                      value={distances.camera}
+                      onChange={e => setDistances({ ...distances, camera: e.target.value })}
+                    />
+                    <span>m</span>
+                  </div>
+                </label>
+                <label className="distance-field">
+                  <span className="distance-label">⚡ Cabo até o SPDA</span>
+                  <div className="input-suffix">
+                    <input
+                      id="dist-spda"
+                      type="number"
+                      inputMode="decimal"
+                      min="0"
+                      className="poste-input"
+                      placeholder="0"
+                      value={distances.spda}
+                      onChange={e => setDistances({ ...distances, spda: e.target.value })}
+                    />
+                    <span>m</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className={`glass-card collapsible ${collapsed.has('sec11') ? 'is-collapsed' : ''}`} style={{ marginBottom: '2rem', borderColor: location ? 'var(--success)' : 'var(--glass-border)' }}>
+          <button type="button" className="collapsible-head" onClick={() => toggleSection('sec11')} aria-expanded={!collapsed.has('sec11')}>
+            <h2 className="section-title">11. LOCALIZAÇÃO DO POSTE</h2>
+            <span className="collapsible-meta"><span className="collapsible-chevron">⌄</span></span>
+          </button>
+          <div className="collapsible-body">
+            <div className="collapsible-inner">
+              <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
+                Capture a coordenada GPS atual para registrar a posição exata do poste no terminal.
+              </p>
+              
+
           {location ? (
             <div className="loc-result">
               <div className="loc-result-head">
@@ -513,6 +545,8 @@ export default function ChecklistView({ poste, onSave, onBack }) {
           )}
 
           {locationError && <div className="loc-error">{locationError}</div>}
+            </div>
+          </div>
         </section>
       </main>
 
