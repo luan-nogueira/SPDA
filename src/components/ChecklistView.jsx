@@ -25,10 +25,11 @@ export default function ChecklistView({ poste, onSave, onBack }) {
   const [showManual, setShowManual] = useState(false);
   const [copied, setCopied] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [staticDone, setStaticDone] = useState(poste.staticDone || []);
   const [collapsed, setCollapsed] = useState(() => new Set());
   const [scrolled, setScrolled] = useState(false);
   const stopRefineRef = useRef(null);
-  const initialRef = useRef(JSON.stringify([poste.answers || {}, poste.location || null, poste.distances || { camera: '', spda: '' }, poste.details || {}]));
+  const initialRef = useRef(JSON.stringify([poste.answers || {}, poste.location || null, poste.distances || { camera: '', spda: '' }, poste.details || {}, poste.staticDone || []]));
   const toast = useToast();
 
   useEffect(() => () => stopRefineRef.current?.(), []);
@@ -98,19 +99,30 @@ export default function ChecklistView({ poste, onSave, onBack }) {
   }, [answers]);
 
   const answeredCount = Object.values(answers).filter(a => a?.status).length;
-  const isDirty = JSON.stringify([answers, location, distances, details]) !== initialRef.current;
+  const isDirty = JSON.stringify([answers, location, distances, details, staticDone]) !== initialRef.current;
 
-  const sec6Done = Boolean(details.cameraCount || details.cameraType || details.cameraCondition);
-  const sec7Done = Boolean(details.fiberType || details.fiberCount || details.fiberConnector || details.fiberCable || details.powerType || details.voltage || details.camPowerSource);
-  const sec8Done = Boolean(Object.values(details.inventory || {}).some(item => item.fabricante || item.modelo || item.qtd || item.estado || item.melhoria) || details.missingComponents);
-  const sec9Done = Boolean(details.criticality || details.priority || details.finalObservations);
-  const sec10Done = Boolean(details.panelHeight || distances.camera || distances.spda);
-  const sec11Done = Boolean(location);
+  const sec6Done = staticDone.includes('sec6');
+  const sec7Done = staticDone.includes('sec7');
+  const sec8Done = staticDone.includes('sec8');
+  const sec9Done = staticDone.includes('sec9');
+  const sec10Done = staticDone.includes('sec10');
+  const sec11Done = staticDone.includes('sec11');
 
-  const staticDoneCount = [sec6Done, sec7Done, sec8Done, sec9Done, sec10Done, sec11Done].filter(Boolean).length;
+  const staticDoneCount = staticDone.length;
   const totalItems = TOTAL_QUESTIONS + 6;
   const totalAnswered = answeredCount + staticDoneCount;
   const progress = totalItems === 0 ? 0 : Math.round((totalAnswered / totalItems) * 100);
+
+  const toggleStaticDone = (secId) => {
+    setStaticDone(prev => {
+      if (prev.includes(secId)) {
+        return prev.filter(id => id !== secId);
+      } else {
+        setCollapsed(c => new Set(c).add(secId));
+        return [...prev, secId];
+      }
+    });
+  };
 
   const handleDetailChange = (field, value) => {
     setDetails(prev => ({ ...prev, [field]: value }));
@@ -214,6 +226,7 @@ export default function ChecklistView({ poste, onSave, onBack }) {
         location,
         distances,
         details,
+        staticDone,
         updatedAt: new Date().toISOString()
       });
     } catch (err) {
@@ -330,6 +343,9 @@ export default function ChecklistView({ poste, onSave, onBack }) {
                 <span className="distance-label">Estado Visual das Câmeras (Kit frontal, fixação, lente)</span>
                 <textarea className="poste-input observation-input" placeholder="Descreva o estado visual..." value={details.cameraCondition} onChange={e => handleDetailChange('cameraCondition', e.target.value)}></textarea>
               </label>
+              <button type="button" className="chip-btn" onClick={() => toggleStaticDone('sec6')} style={{ width: '100%', marginTop: '0.5rem', padding: '0.75rem', justifyContent: 'center', background: sec6Done ? 'var(--success)' : 'rgba(255, 255, 255, 0.05)', color: sec6Done ? '#fff' : 'var(--text-primary)' }}>
+                {sec6Done ? '✅ Marcado como Concluído' : 'Marcar Aba como Concluída'}
+              </button>
             </div>
           </div>
         </section>
@@ -375,6 +391,9 @@ export default function ChecklistView({ poste, onSave, onBack }) {
                   <option value="Fonte Externa">Fonte Externa</option>
                 </select>
               </label>
+              <button type="button" className="chip-btn" onClick={() => toggleStaticDone('sec7')} style={{ width: '100%', marginTop: '1rem', padding: '0.75rem', justifyContent: 'center', background: sec7Done ? 'var(--success)' : 'rgba(255, 255, 255, 0.05)', color: sec7Done ? '#fff' : 'var(--text-primary)' }}>
+                {sec7Done ? '✅ Marcado como Concluído' : 'Marcar Aba como Concluída'}
+              </button>
             </div>
           </div>
         </section>
@@ -428,6 +447,9 @@ export default function ChecklistView({ poste, onSave, onBack }) {
                 <span className="distance-label">Componentes Ausentes e Melhorias Propostas</span>
                 <textarea className="poste-input observation-input" placeholder="Cite componentes faltantes..." value={details.missingComponents} onChange={e => handleDetailChange('missingComponents', e.target.value)}></textarea>
               </label>
+              <button type="button" className="chip-btn" onClick={() => toggleStaticDone('sec8')} style={{ width: '100%', marginTop: '1rem', padding: '0.75rem', justifyContent: 'center', background: sec8Done ? 'var(--success)' : 'rgba(255, 255, 255, 0.05)', color: sec8Done ? '#fff' : 'var(--text-primary)' }}>
+                {sec8Done ? '✅ Marcado como Concluído' : 'Marcar Aba como Concluída'}
+              </button>
             </div>
           </div>
         </section>
@@ -467,6 +489,9 @@ export default function ChecklistView({ poste, onSave, onBack }) {
                 <span className="distance-label">Observações Finais da Inspeção</span>
                 <textarea className="poste-input observation-input" placeholder="Dissertação sobre a inspeção..." value={details.finalObservations} onChange={e => handleDetailChange('finalObservations', e.target.value)}></textarea>
               </label>
+              <button type="button" className="chip-btn" onClick={() => toggleStaticDone('sec9')} style={{ width: '100%', marginTop: '1rem', padding: '0.75rem', justifyContent: 'center', background: sec9Done ? 'var(--success)' : 'rgba(255, 255, 255, 0.05)', color: sec9Done ? '#fff' : 'var(--text-primary)' }}>
+                {sec9Done ? '✅ Marcado como Concluído' : 'Marcar Aba como Concluída'}
+              </button>
             </div>
           </div>
         </section>
@@ -520,6 +545,9 @@ export default function ChecklistView({ poste, onSave, onBack }) {
                   </div>
                 </label>
               </div>
+              <button type="button" className="chip-btn" onClick={() => toggleStaticDone('sec10')} style={{ width: '100%', marginTop: '1rem', padding: '0.75rem', justifyContent: 'center', background: sec10Done ? 'var(--success)' : 'rgba(255, 255, 255, 0.05)', color: sec10Done ? '#fff' : 'var(--text-primary)' }}>
+                {sec10Done ? '✅ Marcado como Concluído' : 'Marcar Aba como Concluída'}
+              </button>
             </div>
           </div>
         </section>
@@ -609,6 +637,9 @@ export default function ChecklistView({ poste, onSave, onBack }) {
           )}
 
           {locationError && <div className="loc-error">{locationError}</div>}
+              <button type="button" className="chip-btn" onClick={() => toggleStaticDone('sec11')} style={{ width: '100%', marginTop: '1.5rem', padding: '0.75rem', justifyContent: 'center', background: sec11Done ? 'var(--success)' : 'rgba(255, 255, 255, 0.05)', color: sec11Done ? '#fff' : 'var(--text-primary)' }}>
+                {sec11Done ? '✅ Marcado como Concluído' : 'Marcar Aba como Concluída'}
+              </button>
             </div>
           </div>
         </section>
