@@ -22,7 +22,7 @@ export const checklistData = [
     ]
   },
   {
-    title: '4. CAIXA DE EQUIPAMENTOS E INVENTÁRIO',
+    title: '4. CAIXA DE EQUIPAMENTOS',
     questions: [
       { id: 'q7_1', text: 'Condição geral da caixa/painel' },
       { id: 'q7_2', text: 'Atendimento por fibra está correto?' },

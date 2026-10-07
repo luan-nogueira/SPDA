@@ -231,6 +231,14 @@ export default function ChecklistView({ poste, onSave, onBack }) {
                 />
               )
             })}
+            {index === 4 && (
+              <div style={{ marginTop: '1.5rem', paddingTop: '1rem', borderTop: '1px dashed var(--glass-border)' }}>
+                <label className="distance-field" style={{ marginBottom: '0.5rem' }}>
+                  <span className="distance-label" style={{ color: 'var(--primary)' }}>Melhorias e Padronização (Sistema de SPDA)</span>
+                  <textarea className="poste-input observation-input" placeholder="Sugestões para o SPDA..." value={details.spdaImprovements} onChange={e => handleDetailChange('spdaImprovements', e.target.value)}></textarea>
+                </label>
+              </div>
+            )}
               </div>
             </div>
           </section>
@@ -273,7 +281,7 @@ export default function ChecklistView({ poste, onSave, onBack }) {
         </section>
 
         <section className="glass-card">
-          <h2 className="section-title">📦 Caixa de Equipamentos e Inventário</h2>
+          <h2 className="section-title">📦 Caixa de Equipamentos</h2>
           
           <h3 style={{ fontSize: '1rem', marginBottom: '0.5rem', marginTop: '1rem' }}>Detalhes das Fibras</h3>
           <div className="options-group" style={{ marginBottom: '0.5rem' }}>
@@ -307,7 +315,10 @@ export default function ChecklistView({ poste, onSave, onBack }) {
             </select>
           </label>
 
-          <h3 style={{ fontSize: '1rem', marginBottom: '1rem' }}>Inventário Detalhado</h3>
+        </section>
+
+        <section className="glass-card">
+          <h2 className="section-title">📋 Inventário Detalhado</h2>
           <div className="inventory-list" style={{ marginBottom: '1rem' }}>
             {['Switch', 'Injetor POE', 'Fonte de alimentação', 'Disjuntor / DPR', 'DPS', 'Conversor de mídia', 'Rádio', 'DIO', 'Bornes / Barramento de terra', 'Nobreak / Bateria'].map(item => (
               <div key={item} className="inventory-card">
@@ -350,11 +361,7 @@ export default function ChecklistView({ poste, onSave, onBack }) {
         </section>
 
         <section className="glass-card">
-          <h2 className="section-title">⚡ SPDA & Observações Finais</h2>
-          <label className="distance-field" style={{ marginBottom: '1rem' }}>
-            <span className="distance-label">Melhorias e Padronização (Sistema de SPDA)</span>
-            <textarea className="poste-input observation-input" placeholder="Sugestões para o SPDA..." value={details.spdaImprovements} onChange={e => handleDetailChange('spdaImprovements', e.target.value)}></textarea>
-          </label>
+          <h2 className="section-title">📝 Observações Finais</h2>
           <div className="distance-grid">
             <label className="distance-field">
               <span className="distance-label">Criticidade do Poste</span>
