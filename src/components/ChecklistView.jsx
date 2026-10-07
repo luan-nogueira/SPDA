@@ -101,6 +101,13 @@ export default function ChecklistView({ poste, onSave, onBack }) {
   const progress = TOTAL_QUESTIONS === 0 ? 0 : Math.round((answeredCount / TOTAL_QUESTIONS) * 100);
   const isDirty = JSON.stringify([answers, location, distances, details]) !== initialRef.current;
 
+  const sec6Done = Boolean(details.cameraCount || details.cameraType || details.cameraCondition);
+  const sec7Done = Boolean(details.fiberType || details.fiberCount || details.fiberConnector || details.fiberCable || details.powerType || details.voltage || details.camPowerSource);
+  const sec8Done = Boolean(Object.values(details.inventory || {}).some(item => item.fabricante || item.modelo || item.qtd || item.estado || item.melhoria) || details.missingComponents);
+  const sec9Done = Boolean(details.criticality || details.priority || details.finalObservations);
+  const sec10Done = Boolean(details.panelHeight || distances.camera || distances.spda);
+  const sec11Done = Boolean(location);
+
   const handleDetailChange = (field, value) => {
     setDetails(prev => ({ ...prev, [field]: value }));
   };
@@ -298,7 +305,10 @@ export default function ChecklistView({ poste, onSave, onBack }) {
         <section className={`glass-card collapsible ${collapsed.has('sec6') ? 'is-collapsed' : ''}`}>
           <button type="button" className="collapsible-head" onClick={() => toggleSection('sec6')} aria-expanded={!collapsed.has('sec6')}>
             <h2 className="section-title">6. INFORMAÇÕES DAS CÂMERAS</h2>
-            <span className="collapsible-meta"><span className="collapsible-chevron">⌄</span></span>
+            <span className="collapsible-meta">
+              {sec6Done && <span className="section-count done">✓</span>}
+              <span className="collapsible-chevron">⌄</span>
+            </span>
           </button>
           <div className="collapsible-body">
             <div className="collapsible-inner">
@@ -323,7 +333,10 @@ export default function ChecklistView({ poste, onSave, onBack }) {
         <section className={`glass-card collapsible ${collapsed.has('sec7') ? 'is-collapsed' : ''}`}>
           <button type="button" className="collapsible-head" onClick={() => toggleSection('sec7')} aria-expanded={!collapsed.has('sec7')}>
             <h2 className="section-title">7. DADOS DA CAIXA DE EQUIPAMENTOS</h2>
-            <span className="collapsible-meta"><span className="collapsible-chevron">⌄</span></span>
+            <span className="collapsible-meta">
+              {sec7Done && <span className="section-count done">✓</span>}
+              <span className="collapsible-chevron">⌄</span>
+            </span>
           </button>
           <div className="collapsible-body">
             <div className="collapsible-inner">
@@ -365,7 +378,10 @@ export default function ChecklistView({ poste, onSave, onBack }) {
         <section className={`glass-card collapsible ${collapsed.has('sec8') ? 'is-collapsed' : ''}`}>
           <button type="button" className="collapsible-head" onClick={() => toggleSection('sec8')} aria-expanded={!collapsed.has('sec8')}>
             <h2 className="section-title">8. INVENTÁRIO DETALHADO</h2>
-            <span className="collapsible-meta"><span className="collapsible-chevron">⌄</span></span>
+            <span className="collapsible-meta">
+              {sec8Done && <span className="section-count done">✓</span>}
+              <span className="collapsible-chevron">⌄</span>
+            </span>
           </button>
           <div className="collapsible-body">
             <div className="collapsible-inner">
@@ -415,7 +431,10 @@ export default function ChecklistView({ poste, onSave, onBack }) {
         <section className={`glass-card collapsible ${collapsed.has('sec9') ? 'is-collapsed' : ''}`}>
           <button type="button" className="collapsible-head" onClick={() => toggleSection('sec9')} aria-expanded={!collapsed.has('sec9')}>
             <h2 className="section-title">9. OBSERVAÇÕES FINAIS</h2>
-            <span className="collapsible-meta"><span className="collapsible-chevron">⌄</span></span>
+            <span className="collapsible-meta">
+              {sec9Done && <span className="section-count done">✓</span>}
+              <span className="collapsible-chevron">⌄</span>
+            </span>
           </button>
           <div className="collapsible-body">
             <div className="collapsible-inner">
@@ -451,7 +470,10 @@ export default function ChecklistView({ poste, onSave, onBack }) {
         <section className={`glass-card collapsible ${collapsed.has('sec10') ? 'is-collapsed' : ''}`}>
           <button type="button" className="collapsible-head" onClick={() => toggleSection('sec10')} aria-expanded={!collapsed.has('sec10')}>
             <h2 className="section-title">10. DISTÂNCIAS, CABEAMENTO E PAINEL</h2>
-            <span className="collapsible-meta"><span className="collapsible-chevron">⌄</span></span>
+            <span className="collapsible-meta">
+              {sec10Done && <span className="section-count done">✓</span>}
+              <span className="collapsible-chevron">⌄</span>
+            </span>
           </button>
           <div className="collapsible-body">
             <div className="collapsible-inner">
@@ -501,7 +523,10 @@ export default function ChecklistView({ poste, onSave, onBack }) {
         <section className={`glass-card collapsible ${collapsed.has('sec11') ? 'is-collapsed' : ''}`} style={{ marginBottom: '2rem', borderColor: location ? 'var(--success)' : 'var(--glass-border)' }}>
           <button type="button" className="collapsible-head" onClick={() => toggleSection('sec11')} aria-expanded={!collapsed.has('sec11')}>
             <h2 className="section-title">11. LOCALIZAÇÃO DO POSTE</h2>
-            <span className="collapsible-meta"><span className="collapsible-chevron">⌄</span></span>
+            <span className="collapsible-meta">
+              {sec11Done && <span className="section-count done">✓</span>}
+              <span className="collapsible-chevron">⌄</span>
+            </span>
           </button>
           <div className="collapsible-body">
             <div className="collapsible-inner">
