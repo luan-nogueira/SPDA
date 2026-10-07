@@ -98,7 +98,6 @@ export default function ChecklistView({ poste, onSave, onBack }) {
   }, [answers]);
 
   const answeredCount = Object.values(answers).filter(a => a?.status).length;
-  const progress = TOTAL_QUESTIONS === 0 ? 0 : Math.round((answeredCount / TOTAL_QUESTIONS) * 100);
   const isDirty = JSON.stringify([answers, location, distances, details]) !== initialRef.current;
 
   const sec6Done = Boolean(details.cameraCount || details.cameraType || details.cameraCondition);
@@ -107,6 +106,11 @@ export default function ChecklistView({ poste, onSave, onBack }) {
   const sec9Done = Boolean(details.criticality || details.priority || details.finalObservations);
   const sec10Done = Boolean(details.panelHeight || distances.camera || distances.spda);
   const sec11Done = Boolean(location);
+
+  const staticDoneCount = [sec6Done, sec7Done, sec8Done, sec9Done, sec10Done, sec11Done].filter(Boolean).length;
+  const totalItems = TOTAL_QUESTIONS + 6;
+  const totalAnswered = answeredCount + staticDoneCount;
+  const progress = totalItems === 0 ? 0 : Math.round((totalAnswered / totalItems) * 100);
 
   const handleDetailChange = (field, value) => {
     setDetails(prev => ({ ...prev, [field]: value }));
@@ -226,7 +230,7 @@ export default function ChecklistView({ poste, onSave, onBack }) {
           <button id="btn-back" onClick={handleBack} className="icon-btn back-btn" aria-label="Voltar">‹</button>
           <div className="sticky-title">
             <strong>{poste.num ? `#${poste.num} · ` : ''}{poste.name}</strong>
-            <small>{answeredCount}/{TOTAL_QUESTIONS} itens respondidos{isDirty ? ' · não salvo' : ''}</small>
+            <small>{totalAnswered}/{totalItems} itens respondidos{isDirty ? ' · não salvo' : ''}</small>
           </div>
           <span className={`sticky-pct ${progress === 100 ? 'done' : ''}`}>{progress}%</span>
         </div>
