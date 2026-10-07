@@ -308,38 +308,39 @@ export default function ChecklistView({ poste, onSave, onBack }) {
           </label>
 
           <h3 style={{ fontSize: '1rem', marginBottom: '1rem' }}>Inventário Detalhado</h3>
-          <div style={{ overflowX: 'auto', marginBottom: '1rem' }}>
-            <table className="inventory-table">
-              <thead>
-                <tr>
-                  <th>Equipamento</th>
-                  <th>Fabricante</th>
-                  <th>Modelo</th>
-                  <th>Qtd</th>
-                  <th>Estado</th>
-                  <th>Melhoria</th>
-                </tr>
-              </thead>
-              <tbody>
-                {['Switch', 'Injetor POE', 'Fonte de alimentação', 'Disjuntor / DPR', 'DPS', 'Conversor de mídia', 'Rádio', 'DIO', 'Bornes / Barramento de terra', 'Nobreak / Bateria'].map(item => (
-                  <tr key={item}>
-                    <td style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>{item}</td>
-                    <td><input type="text" className="inv-input" value={details.inventory[item]?.fabricante || ''} onChange={e => handleInventoryChange(item, 'fabricante', e.target.value)}/></td>
-                    <td><input type="text" className="inv-input" value={details.inventory[item]?.modelo || ''} onChange={e => handleInventoryChange(item, 'modelo', e.target.value)}/></td>
-                    <td><input type="number" className="inv-input" style={{ width: '50px' }} value={details.inventory[item]?.qtd || ''} onChange={e => handleInventoryChange(item, 'qtd', e.target.value)}/></td>
-                    <td>
-                      <select className="inv-input" value={details.inventory[item]?.estado || ''} onChange={e => handleInventoryChange(item, 'estado', e.target.value)}>
-                        <option value=""></option>
-                        <option value="Bom">Bom</option>
-                        <option value="Regular">Regular</option>
-                        <option value="Ruim">Ruim</option>
-                      </select>
-                    </td>
-                    <td><input type="text" className="inv-input" value={details.inventory[item]?.melhoria || ''} onChange={e => handleInventoryChange(item, 'melhoria', e.target.value)}/></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="inventory-list" style={{ marginBottom: '1rem' }}>
+            {['Switch', 'Injetor POE', 'Fonte de alimentação', 'Disjuntor / DPR', 'DPS', 'Conversor de mídia', 'Rádio', 'DIO', 'Bornes / Barramento de terra', 'Nobreak / Bateria'].map(item => (
+              <div key={item} className="inventory-card">
+                <h4 className="inventory-card-title">{item}</h4>
+                <div className="inventory-card-grid">
+                  <label>
+                    <span>Fabricante</span>
+                    <input type="text" className="inv-input" value={details.inventory[item]?.fabricante || ''} onChange={e => handleInventoryChange(item, 'fabricante', e.target.value)}/>
+                  </label>
+                  <label>
+                    <span>Modelo</span>
+                    <input type="text" className="inv-input" value={details.inventory[item]?.modelo || ''} onChange={e => handleInventoryChange(item, 'modelo', e.target.value)}/>
+                  </label>
+                  <label>
+                    <span>Qtd</span>
+                    <input type="number" className="inv-input" value={details.inventory[item]?.qtd || ''} onChange={e => handleInventoryChange(item, 'qtd', e.target.value)}/>
+                  </label>
+                  <label>
+                    <span>Estado</span>
+                    <select className="inv-input" value={details.inventory[item]?.estado || ''} onChange={e => handleInventoryChange(item, 'estado', e.target.value)}>
+                      <option value=""></option>
+                      <option value="Bom">Bom</option>
+                      <option value="Regular">Regular</option>
+                      <option value="Ruim">Ruim</option>
+                    </select>
+                  </label>
+                  <label className="full-width">
+                    <span>Melhoria</span>
+                    <input type="text" className="inv-input" value={details.inventory[item]?.melhoria || ''} onChange={e => handleInventoryChange(item, 'melhoria', e.target.value)}/>
+                  </label>
+                </div>
+              </div>
+            ))}
           </div>
 
           <label className="distance-field" style={{ marginBottom: '1rem' }}>
