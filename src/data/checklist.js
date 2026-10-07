@@ -39,7 +39,11 @@ export const checklistData = [
       { id: 'q8_2', text: 'Caixas e tampas de inspeção' },
       { id: 'q8_3', text: 'Condutor de aterramento' },
       { id: 'q8_4', text: 'Conectores / solda exotérmica' },
-      { id: 'q8_5', text: 'Equipotencialização da caixa, tampa e carcaças' }
+      { id: 'q8_5', text: 'Equipotencialização da caixa, tampa e carcaças' },
+      { id: 'q8_6', text: 'Infraestrutura do sistema de SPDA íntegra (tubulações, suportes)' },
+      { id: 'q8_7', text: 'Ausência de oxidação aparente no sistema' },
+      { id: 'q8_8', text: 'Abraçadeiras e fixações em bom estado' }
     ]
   }
 ];
+

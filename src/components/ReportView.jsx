@@ -209,6 +209,55 @@ export default function ReportView({ postes, user, onClose }) {
                   </span>
                 </div>
 
+                {p.details && (
+                  <div className="report-poste-details">
+                    <h4>Informações e Inventário</h4>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', fontSize: '0.85rem', marginBottom: '1rem' }}>
+                      {p.details.posteMaterial && <div><strong>Material do Poste:</strong> {p.details.posteMaterial}</div>}
+                      {p.details.cameraCount && <div><strong>Qtd. Câmeras:</strong> {p.details.cameraCount}</div>}
+                      {p.details.cameraType && <div><strong>Tipo de Câmeras:</strong> {p.details.cameraType}</div>}
+                      {p.details.panelHeight && <div><strong>Altura do Painel:</strong> {p.details.panelHeight}</div>}
+                      {p.details.criticality && <div><strong>Criticidade:</strong> {p.details.criticality}</div>}
+                      {p.details.priority && <div><strong>Prioridade:</strong> {p.details.priority}</div>}
+                      {p.details.camPowerSource && <div><strong>Alimentação Câmera:</strong> {p.details.camPowerSource}</div>}
+                      {p.details.powerType && <div><strong>Elétrica:</strong> {p.details.powerType} ({p.details.voltage})</div>}
+                    </div>
+                    {p.details.cameraCondition && <div style={{ fontSize: '0.85rem', marginBottom: '0.5rem' }}><strong>Estado das Câmeras:</strong> {p.details.cameraCondition}</div>}
+                    
+                    {p.details.inventory && Object.keys(p.details.inventory).length > 0 && (
+                      <table className="report-items-table" style={{ marginTop: '0.5rem', marginBottom: '1rem' }}>
+                        <thead>
+                          <tr>
+                            <th>Equipamento</th>
+                            <th>Fab. / Mod.</th>
+                            <th>Qtd</th>
+                            <th>Estado</th>
+                            <th>Melhoria</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {Object.entries(p.details.inventory).map(([item, data]) => {
+                            if (!data.qtd && !data.estado) return null;
+                            return (
+                              <tr key={item}>
+                                <td>{item}</td>
+                                <td>{data.fabricante} / {data.modelo}</td>
+                                <td>{data.qtd}</td>
+                                <td>{data.estado}</td>
+                                <td>{data.melhoria}</td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    )}
+                    
+                    {p.details.spdaImprovements && <div style={{ fontSize: '0.85rem', marginBottom: '0.5rem' }}><strong>Melhorias SPDA:</strong> {p.details.spdaImprovements}</div>}
+                    {p.details.missingComponents && <div style={{ fontSize: '0.85rem', marginBottom: '0.5rem' }}><strong>Componentes Ausentes:</strong> {p.details.missingComponents}</div>}
+                    {p.details.finalObservations && <div style={{ fontSize: '0.85rem', marginBottom: '0.5rem' }}><strong>Observações Finais:</strong> {p.details.finalObservations}</div>}
+                  </div>
+                )}
+
                 {filteredEntries.length === 0 ? (
                   <p className="no-data-hint">Nenhum item respondido para este poste.</p>
                 ) : (
