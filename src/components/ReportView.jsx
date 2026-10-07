@@ -344,7 +344,7 @@ export default function ReportView({ postes, user, onClose }) {
         </section>
 
         <footer className="report-footer">
-          <p>Relatório gerado automaticamente pelo Sistema de Inspeções SPDA · Ferroport</p>
+          <p>Relatório gerado automaticamente pelo Sistema de Formulário de Inspeção Visual · Ferroport</p>
           <p>Página de relatório técnico para fins de controle e conformidade com normas regulamentadoras vigentes.</p>
         </footer>
       </div>

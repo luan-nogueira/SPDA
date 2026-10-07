@@ -121,7 +121,7 @@ export default function HomeView({ postes, user, isOnline, pendingWrites, onCrea
         <div className="home-brand">
           <div className="brand-icon">⚡</div>
           <div>
-            <h1>Inspeções SPDA</h1>
+            <h1>Formulário de Inspeção Visual</h1>
             <p>{firstName ? `Olá, ${firstName}` : 'Gestão de Checklists de Postes'}</p>
           </div>
         </div>

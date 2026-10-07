@@ -246,8 +246,7 @@ export default function ChecklistView({ poste, onSave, onBack }) {
         })}
 
         <section className="glass-card">
-          <h2 className="section-title">📋 Informações do Poste e Equipamentos</h2>
-          
+          <h2 className="section-title">📋 Informações do Poste</h2>
           <label className="distance-field" style={{ marginBottom: '1rem' }}>
             <span className="distance-label">Tipo do Material do Poste</span>
             <select className="poste-input" value={details.posteMaterial} onChange={e => handleDetailChange('posteMaterial', e.target.value)}>
@@ -258,7 +257,10 @@ export default function ChecklistView({ poste, onSave, onBack }) {
               <option value="Outro">Outro</option>
             </select>
           </label>
+        </section>
 
+        <section className="glass-card">
+          <h2 className="section-title">📷 Informações das Câmeras</h2>
           <label className="distance-field" style={{ marginBottom: '1rem' }}>
             <span className="distance-label">Qtd. de Câmeras no Poste</span>
             <input type="number" min="0" className="poste-input" placeholder="0" value={details.cameraCount} onChange={e => handleDetailChange('cameraCount', e.target.value)} />
@@ -273,7 +275,10 @@ export default function ChecklistView({ poste, onSave, onBack }) {
             <span className="distance-label">Estado Visual das Câmeras (Kit frontal, fixação, lente)</span>
             <textarea className="poste-input observation-input" placeholder="Descreva o estado visual..." value={details.cameraCondition} onChange={e => handleDetailChange('cameraCondition', e.target.value)}></textarea>
           </label>
+        </section>
 
+        <section className="glass-card">
+          <h2 className="section-title">🎛️ Instalação do Painel</h2>
           <label className="distance-field" style={{ marginBottom: '1rem' }}>
             <span className="distance-label">Altura de Instalação do Painel (m)</span>
             <input type="text" className="poste-input" placeholder="Ex: 2.5m" value={details.panelHeight} onChange={e => handleDetailChange('panelHeight', e.target.value)} />

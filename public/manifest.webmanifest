@@ -1,7 +1,7 @@
 {
-  "name": "Inspeções SPDA",
-  "short_name": "SPDA",
-  "description": "Checklist de inspeção de postes e SPDA",
+  "name": "Formulário de Inspeção Visual",
+  "short_name": "Inspeção",
+  "description": "Formulário de inspeção visual de postes e SPDA",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0f172a",
