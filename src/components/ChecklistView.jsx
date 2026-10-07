@@ -217,6 +217,20 @@ export default function ChecklistView({ poste, onSave, onBack }) {
             </button>
             <div className="collapsible-body">
               <div className="collapsible-inner">
+            {index === 0 && (
+              <div style={{ marginBottom: '1.5rem', paddingBottom: '1rem', borderBottom: '1px dashed var(--glass-border)' }}>
+                <label className="distance-field" style={{ marginBottom: '0' }}>
+                  <span className="distance-label" style={{ color: 'var(--primary)' }}>Tipo do Material do Poste</span>
+                  <select className="poste-input" value={details.posteMaterial} onChange={e => handleDetailChange('posteMaterial', e.target.value)}>
+                    <option value="">Selecione...</option>
+                    <option value="Duplo T">Duplo T</option>
+                    <option value="Metálico">Metálico</option>
+                    <option value="Concreto">Concreto</option>
+                    <option value="Outro">Outro</option>
+                  </select>
+                </label>
+              </div>
+            )}
             {section.questions.map(q => {
               const answerData = answers[q.id] || {};
               return (
@@ -245,19 +259,6 @@ export default function ChecklistView({ poste, onSave, onBack }) {
           );
         })}
 
-        <section className="glass-card">
-          <h2 className="section-title">📋 Informações do Poste</h2>
-          <label className="distance-field" style={{ marginBottom: '1rem' }}>
-            <span className="distance-label">Tipo do Material do Poste</span>
-            <select className="poste-input" value={details.posteMaterial} onChange={e => handleDetailChange('posteMaterial', e.target.value)}>
-              <option value="">Selecione...</option>
-              <option value="Duplo T">Duplo T</option>
-              <option value="Metálico">Metálico</option>
-              <option value="Concreto">Concreto</option>
-              <option value="Outro">Outro</option>
-            </select>
-          </label>
-        </section>
 
         <section className="glass-card">
           <h2 className="section-title">📷 Informações das Câmeras</h2>
