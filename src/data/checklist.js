@@ -1,6 +1,6 @@
 export const checklistData = [
   {
-    title: '4. ESTADO FÍSICO DO POSTE',
+    title: '1. ESTADO FÍSICO DO POSTE',
     questions: [
       { id: 'q4_1', text: 'Base, fundação e chumbadores' },
       { id: 'q4_2', text: 'Prumo, inclinação e estabilidade' },
@@ -10,19 +10,19 @@ export const checklistData = [
     ]
   },
   {
-    title: '5. ESTADO DA INFRAESTRUTURA',
+    title: '2. ESTADO DA INFRAESTRUTURA',
     questions: [
       { id: 'q5_1', text: 'Condição geral da infraestrutura' }
     ]
   },
   {
-    title: '6. CABOS EXPOSTOS E PADRONIZAÇÃO',
+    title: '3. CABOS EXPOSTOS E PADRONIZAÇÃO',
     questions: [
       { id: 'q6_1', text: 'Existem cabos expostos? (Marque Não Conforme se houver cabos soltos, sem proteção ou com emendas expostas)' }
     ]
   },
   {
-    title: '7. CAIXA DE EQUIPAMENTOS E INVENTÁRIO',
+    title: '4. CAIXA DE EQUIPAMENTOS E INVENTÁRIO',
     questions: [
       { id: 'q7_1', text: 'Condição geral da caixa/painel' },
       { id: 'q7_2', text: 'Atendimento por fibra está correto?' },
@@ -33,7 +33,7 @@ export const checklistData = [
     ]
   },
   {
-    title: '8. ATERRAMENTO VINCULADO AO SPDA',
+    title: '5. ATERRAMENTO VINCULADO AO SPDA',
     questions: [
       { id: 'q8_1', text: 'Hastes de aterramento' },
       { id: 'q8_2', text: 'Caixas e tampas de inspeção' },
