@@ -62,6 +62,41 @@ export default function ChecklistView({ poste, onSave, onBack }) {
     }));
   };
 
+  const completeSectionsRef = useRef(new Set());
+  const isInitialized = useRef(false);
+
+  useEffect(() => {
+    if (!isInitialized.current) {
+      initialSections.forEach((section, index) => {
+        const sectionAnswered = section.questions.filter(q => answers[q.id]?.status).length;
+        if (sectionAnswered === section.questions.length) {
+          completeSectionsRef.current.add(index);
+        }
+      });
+      isInitialized.current = true;
+      return;
+    }
+
+    initialSections.forEach((section, index) => {
+      const sectionAnswered = section.questions.filter(q => answers[q.id]?.status).length;
+      const isComplete = sectionAnswered === section.questions.length;
+      
+      if (isComplete && !completeSectionsRef.current.has(index)) {
+        completeSectionsRef.current.add(index);
+        setCollapsed(prev => new Set(prev).add(index));
+        
+        // Auto-scroll to the next section if it exists
+        setTimeout(() => {
+          if (index + 1 < initialSections.length) {
+             // Let the user scroll manually, but auto-collapse is done
+          }
+        }, 300);
+      } else if (!isComplete && completeSectionsRef.current.has(index)) {
+        completeSectionsRef.current.delete(index);
+      }
+    });
+  }, [answers]);
+
   const answeredCount = Object.values(answers).filter(a => a?.status).length;
   const progress = TOTAL_QUESTIONS === 0 ? 0 : Math.round((answeredCount / TOTAL_QUESTIONS) * 100);
   const isDirty = JSON.stringify([answers, location, distances, details]) !== initialRef.current;
