@@ -2255,3 +2255,5 @@ body {
 .inventory-card-grid label { display: flex; flex-direction: column; font-size: 0.75rem; color: var(--text-secondary); }
 .inventory-card-grid label span { margin-bottom: 0.25rem; font-weight: 600; }
 .inventory-card-grid label.full-width { grid-column: 1 / -1; }
+.inventory-card-photo { margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px dashed var(--glass-border); }
+.inventory-card-photo > span { display: block; margin-bottom: 0.4rem; font-size: 0.75rem; font-weight: 600; color: var(--danger); }

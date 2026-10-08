@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ChecklistItem from './ChecklistItem';
+import PhotoField from './PhotoField';
 import MapView from './MapView';
 import { useToast } from './Toast';
 import { checklistData as initialSections } from '../data/checklist';
 import { locateDevice, refineLocation, parseCoordinates, mapsLink, sourceLabel } from '../utils/geo';
 import { TOTAL_QUESTIONS, isPendingPhoto } from '../utils/stats';
+import { inventoryPhotoId } from '../utils/image';
 
 export default function ChecklistView({ poste, onSave, onBack }) {
   const [answers, setAnswers] = useState(poste.answers || {});
@@ -55,6 +57,22 @@ export default function ChecklistView({ poste, onSave, onBack }) {
       return changed ? next : prev;
     });
   }, [poste.answers]);
+
+  // Mesmo tratamento para as fotos dos componentes do inventário
+  useEffect(() => {
+    setDetails(prev => {
+      let changed = false;
+      const inventory = { ...prev.inventory };
+      Object.entries(poste.details?.inventory || {}).forEach(([item, remote]) => {
+        const local = inventory[item];
+        if (local && isPendingPhoto(local.photo) && remote?.photo && !isPendingPhoto(remote.photo)) {
+          inventory[item] = { ...local, photo: remote.photo };
+          changed = true;
+        }
+      });
+      return changed ? { ...prev, inventory } : prev;
+    });
+  }, [poste.details]);
 
   const handleAnswer = (questionId, data) => {
     setAnswers(prev => ({
@@ -439,6 +457,17 @@ export default function ChecklistView({ poste, onSave, onBack }) {
                         <input type="text" className="inv-input" value={details.inventory[item]?.melhoria || ''} onChange={e => handleInventoryChange(item, 'melhoria', e.target.value)}/>
                       </label>
                     </div>
+                    {(['Regular', 'Ruim'].includes(details.inventory[item]?.estado) || details.inventory[item]?.photo) && (
+                      <div className="inventory-card-photo">
+                        <span>Foto do componente (não conforme)</span>
+                        <PhotoField
+                          id={inventoryPhotoId(item)}
+                          label={item}
+                          photo={details.inventory[item]?.photo || null}
+                          onChange={photo => handleInventoryChange(item, 'photo', photo)}
+                        />
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>

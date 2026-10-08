@@ -7,11 +7,19 @@ import { useToast } from './components/Toast';
 import { checklistData } from './data/checklist';
 import { sourceLabel } from './utils/geo';
 import { isPendingPhoto } from './utils/stats';
-import { dataUrlToBlob } from './utils/image';
+import { dataUrlToBlob, inventoryPhotoId } from './utils/image';
 import { db, auth, storage } from './firebase';
 import { collection, onSnapshot, doc, setDoc, deleteDoc } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
+
+// Envia ao Storage uma foto gravada localmente como data: e devolve a URL definitiva
+const uploadPendingPhoto = async (dataUrl, fileName) => {
+  const blob = await dataUrlToBlob(dataUrl);
+  const storageRef = ref(storage, `photos/${fileName}.jpg`);
+  const uploadTask = await uploadBytesResumable(storageRef, blob, { contentType: 'image/jpeg' });
+  return getDownloadURL(uploadTask.ref);
+};
 
 function App() {
   const [user, setUser] = useState(null);
@@ -139,10 +147,7 @@ function App() {
           if (ans?.photo && isPendingPhoto(ans.photo)) {
             try {
               syncingPhotosRef.current = true;
-              const blob = await dataUrlToBlob(ans.photo);
-              const storageRef = ref(storage, `photos/${qId}_${Date.now()}_sync.jpg`);
-              const uploadTask = await uploadBytesResumable(storageRef, blob, { contentType: 'image/jpeg' });
-              const downloadURL = await getDownloadURL(uploadTask.ref);
+              const downloadURL = await uploadPendingPhoto(ans.photo, `${qId}_${Date.now()}_sync`);
 
               newAnswers[qId] = { ...ans, photo: downloadURL };
               updated = true;
@@ -152,11 +157,30 @@ function App() {
           }
         }
 
+        // Fotos dos componentes do inventário (item 8)
+        const inventory = poste.details?.inventory || {};
+        const newInventory = { ...inventory };
+
+        for (const [item, data] of Object.entries(inventory)) {
+          if (data?.photo && isPendingPhoto(data.photo)) {
+            try {
+              syncingPhotosRef.current = true;
+              const downloadURL = await uploadPendingPhoto(data.photo, `${inventoryPhotoId(item)}_${Date.now()}_sync`);
+
+              newInventory[item] = { ...data, photo: downloadURL };
+              updated = true;
+            } catch (err) {
+              console.warn('Erro ao sincronizar foto pendente do inventário:', err);
+            }
+          }
+        }
+
         if (updated) {
           try {
             await setDoc(doc(db, "contratos/SPDA/postes", poste.id), {
               ...poste,
               answers: newAnswers,
+              ...(poste.details && { details: { ...poste.details, inventory: newInventory } }),
               updatedAt: new Date().toISOString()
             });
             toast?.success(`Fotos do ${poste.name} sincronizadas na nuvem!`);
@@ -226,10 +250,7 @@ function App() {
     for (const [qId, ans] of Object.entries(cleanedAnswers)) {
       if (ans?.photo && isPendingPhoto(ans.photo)) {
         try {
-          const blob = await dataUrlToBlob(ans.photo);
-          const storageRef = ref(storage, `photos/${qId}_${Date.now()}.jpg`);
-          const uploadTask = await uploadBytesResumable(storageRef, blob, { contentType: 'image/jpeg' });
-          const downloadURL = await getDownloadURL(uploadTask.ref);
+          const downloadURL = await uploadPendingPhoto(ans.photo, `${qId}_${Date.now()}`);
           cleanedAnswers[qId] = { ...ans, photo: downloadURL };
         } catch (err) {
           console.warn("Foto mantida em cache local:", err);
@@ -237,9 +258,23 @@ function App() {
       }
     }
 
+    // Idem para as fotos dos componentes do inventário (item 8)
+    const cleanedInventory = { ...(data.details?.inventory || {}) };
+    for (const [item, inv] of Object.entries(cleanedInventory)) {
+      if (inv?.photo && isPendingPhoto(inv.photo)) {
+        try {
+          const downloadURL = await uploadPendingPhoto(inv.photo, `${inventoryPhotoId(item)}_${Date.now()}`);
+          cleanedInventory[item] = { ...inv, photo: downloadURL };
+        } catch (err) {
+          console.warn("Foto do inventário mantida em cache local:", err);
+        }
+      }
+    }
+
     const docData = sanitizeForFirestore({
       ...data,
       answers: cleanedAnswers,
+      ...(data.details && { details: { ...data.details, inventory: cleanedInventory } }),
       updatedAt: new Date().toISOString()
     });
 

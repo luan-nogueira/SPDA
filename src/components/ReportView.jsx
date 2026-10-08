@@ -173,7 +173,8 @@ export default function ReportView({ postes, user, onClose }) {
               ? answerEntries.filter(([, a]) => a?.status === 'nao-conforme')
               : answerEntries.filter(([, a]) => a?.status);
 
-            const hasPhotos = answerEntries.some(([, a]) => a?.photo);
+            const inventoryPhotos = Object.entries(p.details?.inventory || {}).filter(([, data]) => data?.photo);
+            const hasPhotos = answerEntries.some(([, a]) => a?.photo) || inventoryPhotos.length > 0;
 
             if (onlyNonCompliant && s.bad === 0) {
               return null; // Oculta postes sem não conformidade quando filtro ativo
@@ -317,6 +318,15 @@ export default function ReportView({ postes, user, onClose }) {
                             </div>
                           );
                         })}
+                      {inventoryPhotos.map(([item, data]) => (
+                        <div key={item} className="report-photo-card">
+                          <img src={data.photo} alt={item} />
+                          <div className="photo-legend">
+                            <strong>Inventário: {item}{data.estado ? ` (${data.estado})` : ''}</strong>
+                            {data.melhoria && <p>{data.melhoria}</p>}
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 )}

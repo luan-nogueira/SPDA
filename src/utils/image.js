@@ -28,6 +28,10 @@ export const canvasToDataUrl = (canvas, maxSize = 960, quality = 0.55) => {
   return c.toDataURL('image/jpeg', quality);
 };
 
+/** Nome de arquivo seguro para a foto de um componente do inventário ("Disjuntor / DPR" -> "inv_disjuntor_dpr"). */
+export const inventoryPhotoId = (item) =>
+  `inv_${item.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '')}`;
+
 export async function dataUrlToBlob(dataUrl) {
   try {
     const res = await fetch(dataUrl);

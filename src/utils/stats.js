@@ -8,8 +8,9 @@ export function posteStats(poste) {
   const answers = Object.values(poste?.answers || {});
   const answered = answers.filter((a) => a?.status).length;
   const bad = answers.filter((a) => a?.status === 'nao-conforme').length;
-  const photos = answers.filter((a) => a?.photo).length;
-  const pendingPhotos = answers.filter((a) => isPendingPhoto(a?.photo)).length;
+  const allPhotos = [...answers, ...Object.values(poste?.details?.inventory || {})].map((a) => a?.photo);
+  const photos = allPhotos.filter(Boolean).length;
+  const pendingPhotos = allPhotos.filter(isPendingPhoto).length;
   const pct = TOTAL_QUESTIONS ? Math.round((answered / TOTAL_QUESTIONS) * 100) : 0;
   return { answered, total: TOTAL_QUESTIONS, pct, bad, photos, pendingPhotos };
 }
