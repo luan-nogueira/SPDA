@@ -65,7 +65,7 @@ export function ProgressRing({ pct, size = 46, stroke = 4, bad = 0 }) {
   );
 }
 
-export default function HomeView({ postes, user, isOnline, pendingWrites, onCreateNew, onEditPoste, onExportReport, onOpenReport, onDeletePoste, onLogout }) {
+export default function HomeView({ postes, user, isOnline, pendingWrites, onCreateNew, onEditPoste, onExportReport, onOpenReport, onOpenPosteReport, onDeletePoste, onLogout }) {
   const [newPosteName, setNewPosteName] = useState('');
   const [search, setSearch] = useState('');
   const [selectedMapPoste, setSelectedMapPoste] = useState(null);
@@ -225,6 +225,14 @@ export default function HomeView({ postes, user, isOnline, pendingWrites, onCrea
                       </div>
                     </div>
                     <div className="poste-actions">
+                      <button
+                        className="icon-btn pdf-btn"
+                        aria-label={`Exportar PDF de ${poste.name}`}
+                        title="Exportar PDF deste poste"
+                        onClick={(e) => { e.stopPropagation(); onOpenPosteReport(poste.id); }}
+                      >
+                        📄
+                      </button>
                       <button
                         className="icon-btn delete-btn"
                         aria-label={`Excluir ${poste.name}`}

@@ -3,7 +3,8 @@ import { checklistData } from '../data/checklist';
 import { globalStats, posteStats, STATUS_LABEL } from '../utils/stats';
 import { mapsLink, sourceLabel } from '../utils/geo';
 
-export default function ReportView({ postes, user, onClose }) {
+// single: relatório individual, com `postes` contendo apenas o poste escolhido
+export default function ReportView({ postes, user, onClose, single = false }) {
   const [onlyNonCompliant, setOnlyNonCompliant] = useState(false);
   const g = globalStats(postes);
 
@@ -16,6 +17,12 @@ export default function ReportView({ postes, user, onClose }) {
   });
 
   const handlePrint = () => {
+    if (single && postes[0]) {
+      // O navegador sugere o título da página como nome do arquivo PDF
+      const originalTitle = document.title;
+      document.title = `Relatório SPDA - Poste ${postes[0].num || ''} - ${postes[0].name}`;
+      window.addEventListener('afterprint', () => { document.title = originalTitle; }, { once: true });
+    }
     window.print();
   };
 
@@ -26,7 +33,7 @@ export default function ReportView({ postes, user, onClose }) {
           <button onClick={onClose} className="chip-btn" id="btn-close-report">
             ← Voltar ao Sistema
           </button>
-          <span className="report-toolbar-title">Prévia de Impressão / PDF</span>
+          <span className="report-toolbar-title">{single ? 'Prévia do PDF do Poste' : 'Prévia de Impressão / PDF'}</span>
         </div>
         <div className="report-toolbar-right">
           <label className="filter-checkbox-label">
@@ -62,7 +69,9 @@ export default function ReportView({ postes, user, onClose }) {
           </div>
         </header>
 
-        {/* Resumo Executivo */}
+        {/* Resumo Executivo e quadro geral só fazem sentido no relatório com todos os postes */}
+        {!single && (
+        <>
         <section className="report-summary-section">
           <h2 className="report-section-heading">1. RESUMO EXECUTIVO DA VISTORIA</h2>
           <div className="report-stats-grid">
@@ -158,10 +167,14 @@ export default function ReportView({ postes, user, onClose }) {
             </tbody>
           </table>
         </section>
+        </>
+        )}
 
         {/* Detalhamento por Poste */}
         <section className="report-details-section">
-          <h2 className="report-section-heading">3. DETALHAMENTO DAS INSPEÇÕES & EVIDÊNCIAS FOTOGRÁFICAS</h2>
+          <h2 className="report-section-heading">
+            {single ? 'DETALHAMENTO DA INSPEÇÃO & EVIDÊNCIAS FOTOGRÁFICAS' : '3. DETALHAMENTO DAS INSPEÇÕES & EVIDÊNCIAS FOTOGRÁFICAS'}
+          </h2>
 
           {postes.map((p, index) => {
             const s = posteStats(p);
@@ -176,7 +189,7 @@ export default function ReportView({ postes, user, onClose }) {
             const inventoryPhotos = Object.entries(p.details?.inventory || {}).filter(([, data]) => data?.photo);
             const hasPhotos = answerEntries.some(([, a]) => a?.photo) || inventoryPhotos.length > 0;
 
-            if (onlyNonCompliant && s.bad === 0) {
+            if (onlyNonCompliant && s.bad === 0 && !single) {
               return null; // Oculta postes sem não conformidade quando filtro ativo
             }
 
@@ -260,7 +273,7 @@ export default function ReportView({ postes, user, onClose }) {
                 )}
 
                 {filteredEntries.length === 0 ? (
-                  <p className="no-data-hint">Nenhum item respondido para este poste.</p>
+                  <p className="no-data-hint">{onlyNonCompliant ? 'Nenhuma não conformidade registrada para este poste.' : 'Nenhum item respondido para este poste.'}</p>
                 ) : (
                   <table className="report-items-table">
                     <thead>

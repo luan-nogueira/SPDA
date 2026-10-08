@@ -31,6 +31,7 @@ function App() {
   const [currentView, setCurrentView] = useState('home');
   const [activePosteId, setActivePosteId] = useState(null);
   const [showReport, setShowReport] = useState(false);
+  const [reportPosteId, setReportPosteId] = useState(null); // null = relatório com todos os postes
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [pendingWrites, setPendingWrites] = useState(0);
 
@@ -411,6 +412,7 @@ function App() {
           onDeletePoste={handleDeletePoste}
           onExportReport={exportReport}
           onOpenReport={() => setShowReport(true)}
+          onOpenPosteReport={(id) => { setReportPosteId(id); setShowReport(true); }}
           onLogout={handleLogout}
         />
       )}
@@ -424,10 +426,11 @@ function App() {
       )}
 
       {showReport && (
-        <ReportView 
-          postes={postes}
+        <ReportView
+          postes={reportPosteId ? postes.filter(p => p.id === reportPosteId) : postes}
+          single={!!reportPosteId}
           user={user}
-          onClose={() => setShowReport(false)}
+          onClose={() => { setShowReport(false); setReportPosteId(null); }}
         />
       )}
     </>

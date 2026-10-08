@@ -10,7 +10,7 @@ export const checklistData = [
     ]
   },
   {
-    title: '2. ESTADO DA INFRAESTRUTURA',
+    title: '2. ESTADO DA INFRAESTRUTURA DE CFTV',
     questions: [
       { id: 'q5_1', text: 'Condição geral da infraestrutura' }
     ]
