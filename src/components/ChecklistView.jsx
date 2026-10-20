@@ -8,17 +8,22 @@ import { locateDevice, refineLocation, parseCoordinates, mapsLink, sourceLabel }
 import { TOTAL_QUESTIONS, isPendingPhoto } from '../utils/stats';
 import { inventoryPhotoId } from '../utils/image';
 
+const DEFAULT_DETAILS = {
+  posteMaterial: '', cameraCount: '', cameraType: '', cameraCondition: '', panelHeight: '',
+  fiberType: '', fiberCount: '', fiberConnector: '', fiberCable: '',
+  powerType: '', voltage: '', camPowerSource: '', missingComponents: '',
+  spdaImprovements: '', criticality: '', priority: '', finalObservations: '',
+  inventory: {}
+};
+
+// Completa campos ausentes (ex.: postes antigos sem inventário) sem alterar os dados já salvos
+const normalizeDetails = (d) => ({ ...DEFAULT_DETAILS, ...(d || {}), inventory: { ...(d?.inventory || {}) } });
+
 export default function ChecklistView({ poste, onSave, onBack }) {
   const [answers, setAnswers] = useState(poste.answers || {});
   const [location, setLocation] = useState(poste.location || null);
   const [distances, setDistances] = useState(poste.distances || { camera: '', spda: '' });
-  const [details, setDetails] = useState(poste.details || {
-    posteMaterial: '', cameraCount: '', cameraType: '', cameraCondition: '', panelHeight: '',
-    fiberType: '', fiberCount: '', fiberConnector: '', fiberCable: '',
-    powerType: '', voltage: '', camPowerSource: '', missingComponents: '',
-    spdaImprovements: '', criticality: '', priority: '', finalObservations: '',
-    inventory: {}
-  });
+  const [details, setDetails] = useState(() => normalizeDetails(poste.details));
   const [isLocating, setIsLocating] = useState(false);
   const [locationError, setLocationError] = useState('');
   const [locStatus, setLocStatus] = useState('');
@@ -31,7 +36,7 @@ export default function ChecklistView({ poste, onSave, onBack }) {
   const [collapsed, setCollapsed] = useState(() => new Set());
   const [scrolled, setScrolled] = useState(false);
   const stopRefineRef = useRef(null);
-  const initialRef = useRef(JSON.stringify([poste.answers || {}, poste.location || null, poste.distances || { camera: '', spda: '' }, poste.details || {}, poste.staticDone || []]));
+  const initialRef = useRef(JSON.stringify([poste.answers || {}, poste.location || null, poste.distances || { camera: '', spda: '' }, normalizeDetails(poste.details), poste.staticDone || []]));
   const toast = useToast();
 
   useEffect(() => () => stopRefineRef.current?.(), []);
